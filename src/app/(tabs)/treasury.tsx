@@ -9,15 +9,10 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
-import {
-  CoupleState,
-  Expense,
-  SavingGoal,
-  BudgetLimit,
-  ExpenseCategory,
-} from '../types';
-import { COLORS } from '../constants/theme';
-import { geminiService } from '../services/gemini';
+import { useWeSpace } from '../../context/WeSpaceContext';
+import { Expense, SavingGoal, ExpenseCategory } from '../../types';
+import { COLORS } from '../../constants/theme';
+import { geminiService } from '../../services/gemini';
 import {
   Wallet,
   Plus,
@@ -28,59 +23,64 @@ import {
   CheckCircle2,
   DollarSign,
   TrendingUp,
+  Edit2,
+  Handshake,
+  PieChart,
 } from 'lucide-react-native';
 
-interface TreasuryScreenProps {
-  couple: CoupleState;
-  expenses: Expense[];
-  savings: SavingGoal[];
-  budgetLimit: BudgetLimit;
-  onAddExpense: (expense: Expense) => void;
-  onDeleteExpense: (id: string) => void;
-  onAddSavingGoal: (goal: SavingGoal) => void;
-  onContributeSavings: (goalId: string, amount: number) => void;
-}
-
-const CATEGORIES: ExpenseCategory[] = [
-  'Food & Cafés',
-  'Activities & Dates',
-  'Living Space',
-  'Travel & Adventure',
-  'Nostalgic Gifts',
-  'Other',
+const CATEGORIES: { name: ExpenseCategory; color: string; emoji: string }[] = [
+  { name: 'Food & Cafés', color: '#EE5D6C', emoji: '☕' },
+  { name: 'Activities & Dates', color: '#9D74E7', emoji: '🎟️' },
+  { name: 'Living Space', color: '#F4B942', emoji: '🕯️' },
+  { name: 'Travel & Adventure', color: '#2A9D8F', emoji: '✈️' },
+  { name: 'Nostalgic Gifts', color: '#5EB1EF', emoji: '🎁' },
+  { name: 'Other', color: '#9C8E85', emoji: '✨' },
 ];
 
-export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
-  couple,
-  expenses,
-  savings,
-  budgetLimit,
-  onAddExpense,
-  onDeleteExpense,
-  onAddSavingGoal,
-  onContributeSavings,
-}) => {
+export default function TreasuryScreen() {
+  const {
+    couple,
+    expenses,
+    savings,
+    budgetLimit,
+    addExpense,
+    deleteExpense,
+    settleAllExpenses,
+    updateBudgetLimit,
+    addSavingGoal,
+    contributeSavings,
+  } = useWeSpace();
+
   const [expenseModalOpen, setExpenseModalOpen] = useState(false);
   const [goalModalOpen, setGoalModalOpen] = useState(false);
+  const [limitModalOpen, setLimitModalOpen] = useState(false);
+  const [filterPayer, setFilterPayer] = useState<string>('ALL');
+
   const [aiAdvice, setAiAdvice] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
 
-  // New Expense form state
+  // New Expense Form
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState<ExpenseCategory>('Food & Cafés');
   const [paidBy, setPaidBy] = useState(couple.activeUser);
 
-  // New Goal form state
+  // New Goal Form
   const [goalTitle, setGoalTitle] = useState('');
   const [goalTarget, setGoalTarget] = useState('');
+  const [goalEmoji, setGoalEmoji] = useState('✈️');
 
-  // 50/50 Settlement Algorithm from blueprint
+  // Limit Form
+  const [limitInput, setLimitInput] = useState(
+    budgetLimit.monthlyLimit.toString()
+  );
+
+  // 50/50 Settlement Algorithm from Blueprint
   const calculateSettlement = (
     expenseList: Expense[],
     p1: string,
     p2: string
-  ): { text: string; isEven: boolean; debtor?: string; creditor?: string; amount?: string } => {
+  ) => {
     const p1Paid = expenseList
       .filter((e) => e.paidBy === p1)
       .reduce((acc, e) => acc + e.amount, 0);
@@ -93,21 +93,19 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
       return {
         text: `${p2} owes ${p1} $${diff}`,
         isEven: false,
-        debtor: p2,
-        creditor: p1,
-        amount: diff,
+        p1Paid,
+        p2Paid,
       };
     } else if (p2Paid > p1Paid) {
       const diff = ((p2Paid - p1Paid) / 2).toFixed(2);
       return {
         text: `${p1} owes ${p2} $${diff}`,
         isEven: false,
-        debtor: p1,
-        creditor: p2,
-        amount: diff,
+        p1Paid,
+        p2Paid,
       };
     } else {
-      return { text: 'All settled up! 🤝', isEven: true };
+      return { text: 'All settled up! 🤝', isEven: true, p1Paid, p2Paid };
     }
   };
 
@@ -119,11 +117,16 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
     couple.partner2Name
   );
 
+  const filteredExpenses =
+    filterPayer === 'ALL'
+      ? expenses
+      : expenses.filter((e) => e.paidBy === filterPayer);
+
   const handleCreateExpense = () => {
     const parsedAmount = parseFloat(amount);
     if (!title.trim() || isNaN(parsedAmount) || parsedAmount <= 0) return;
 
-    const newExp: Expense = {
+    addExpense({
       id: `exp_${Date.now()}`,
       coupleId: couple.coupleId,
       title: title.trim(),
@@ -131,9 +134,7 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
       category,
       paidBy,
       timestamp: Date.now(),
-    };
-
-    onAddExpense(newExp);
+    });
     setExpenseModalOpen(false);
     setTitle('');
     setAmount('');
@@ -143,19 +144,26 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
     const parsedTarget = parseFloat(goalTarget);
     if (!goalTitle.trim() || isNaN(parsedTarget) || parsedTarget <= 0) return;
 
-    const newGoal: SavingGoal = {
+    addSavingGoal({
       id: `goal_${Date.now()}`,
       coupleId: couple.coupleId,
       title: goalTitle.trim(),
+      emoji: goalEmoji || '✨',
       targetAmount: parsedTarget,
       currentSaved: 0,
       timestamp: Date.now(),
-    };
-
-    onAddSavingGoal(newGoal);
+    });
     setGoalModalOpen(false);
     setGoalTitle('');
     setGoalTarget('');
+  };
+
+  const handleSaveLimit = () => {
+    const parsed = parseFloat(limitInput);
+    if (!isNaN(parsed) && parsed > 0) {
+      updateBudgetLimit(parsed);
+    }
+    setLimitModalOpen(false);
   };
 
   const requestAiCoPilot = async () => {
@@ -172,27 +180,39 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Monthly Budget Tracker Card */}
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* 1. MONTHLY SHARED BUDGET CARD */}
       <View style={styles.budgetCard}>
         <View style={styles.budgetHeader}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Wallet size={18} color={COLORS.RoseCoral} />
-            <Text style={styles.budgetLabel}>Monthly Shared Budget</Text>
+            <View style={styles.walletIconBox}>
+              <Wallet size={16} color={COLORS.RoseCoral} />
+            </View>
+            <Text style={styles.budgetLabel}>Nest Treasury Budget</Text>
           </View>
-          <Text style={styles.budgetPercent}>
-            {Math.round(budgetRatio * 100)}% Used
-          </Text>
+          <TouchableOpacity
+            style={styles.editLimitBtn}
+            onPress={() => {
+              setLimitInput(budgetLimit.monthlyLimit.toString());
+              setLimitModalOpen(true);
+            }}
+          >
+            <Edit2 size={11} color={COLORS.WarmCharcoalMuted} />
+            <Text style={styles.editLimitText}>Edit Limit</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.budgetNumbers}>
+        <View style={styles.budgetNumbersRow}>
           <Text style={styles.totalSpentText}>${totalSpent.toFixed(2)}</Text>
           <Text style={styles.limitText}>
-            / ${budgetLimit.monthlyLimit.toFixed(2)} limit
+            of ${budgetLimit.monthlyLimit.toFixed(0)} monthly limit
           </Text>
         </View>
 
-        {/* Progress Bar */}
         <View style={styles.progressBarTrack}>
           <View
             style={[
@@ -205,36 +225,102 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
             ]}
           />
         </View>
-        <Text style={styles.budgetRemaining}>
-          ${Math.max(0, budgetLimit.monthlyLimit - totalSpent).toFixed(2)} safe to spend
-        </Text>
+
+        <View style={styles.budgetMetaRow}>
+          <Text style={styles.budgetMetaItem}>
+            {couple.partner1Name}: ${settlement.p1Paid.toFixed(2)}
+          </Text>
+          <Text style={styles.budgetMetaItem}>
+            {couple.partner2Name}: ${settlement.p2Paid.toFixed(2)}
+          </Text>
+          <Text style={styles.budgetSafeText}>
+            ${Math.max(0, budgetLimit.monthlyLimit - totalSpent).toFixed(2)} left
+          </Text>
+        </View>
       </View>
 
-      {/* 50/50 Debt Settlement Card */}
+      {/* 2. 50/50 DEBT SETTLEMENT CALCULATOR */}
       <View style={styles.settlementCard}>
         <View style={styles.settlementTop}>
-          <Scale size={18} color="#059669" />
-          <Text style={styles.settlementHeading}>50/50 Fair Split Settlement</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Scale size={17} color="#047857" />
+            <Text style={styles.settlementHeading}>
+              50/50 Fair Split Calculator
+            </Text>
+          </View>
+          {!settlement.isEven && (
+            <TouchableOpacity
+              style={styles.settleUpBtn}
+              onPress={settleAllExpenses}
+            >
+              <Handshake size={13} color="#FFFFFF" style={{ marginRight: 4 }} />
+              <Text style={styles.settleUpBtnText}>Mark Settled</Text>
+            </TouchableOpacity>
+          )}
         </View>
-        <Text
-          style={[
-            styles.settlementResult,
-            settlement.isEven ? { color: '#059669' } : { color: COLORS.WarmCharcoal },
-          ]}
-        >
-          {settlement.text}
-        </Text>
+
+        <Text style={styles.settlementResult}>{settlement.text}</Text>
         <Text style={styles.settlementSub}>
-          Calculated automatically across all personal payments so nobody has to ask.
+          Automatically balances out individual payments so finances stay stress-free.
         </Text>
       </View>
 
-      {/* AI Financial Co-pilot Card */}
+      {/* 3. CATEGORY SPENDING BREAKDOWN */}
+      {totalSpent > 0 && (
+        <View style={styles.breakdownCard}>
+          <View style={styles.breakdownHeader}>
+            <PieChart size={15} color={COLORS.WarmCharcoal} />
+            <Text style={styles.breakdownTitle}>Category Breakdown</Text>
+          </View>
+
+          {/* Stacked Bar */}
+          <View style={styles.stackedBar}>
+            {CATEGORIES.map((cat) => {
+              const catSum = expenses
+                .filter((e) => e.category === cat.name)
+                .reduce((acc, e) => acc + e.amount, 0);
+              if (catSum <= 0) return null;
+              const pct = (catSum / totalSpent) * 100;
+              return (
+                <View
+                  key={cat.name}
+                  style={{
+                    width: `${pct}%`,
+                    height: '100%',
+                    backgroundColor: cat.color,
+                  }}
+                />
+              );
+            })}
+          </View>
+
+          <View style={styles.legendWrap}>
+            {CATEGORIES.map((cat) => {
+              const catSum = expenses
+                .filter((e) => e.category === cat.name)
+                .reduce((acc, e) => acc + e.amount, 0);
+              if (catSum <= 0) return null;
+              return (
+                <View key={cat.name} style={styles.legendChip}>
+                  <View
+                    style={[styles.legendDot, { backgroundColor: cat.color }]}
+                  />
+                  <Text style={styles.legendLabel}>
+                    {cat.emoji} {cat.name}: ${catSum.toFixed(0)}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+      )}
+
+      {/* 4. AI FINANCIAL CO-PILOT */}
       <View style={styles.aiCard}>
         <View style={styles.aiHeader}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Sparkles size={18} color={COLORS.HoneyYellow} />
-            <Text style={styles.aiTitle}>AI Financial Co-pilot</Text>
+            <Sparkles size={17} color="#D97706" />
+            <Text style={styles.aiTitle}>WeSpace Financial Co-pilot</Text>
           </View>
           <TouchableOpacity
             style={styles.aiButton}
@@ -242,9 +328,9 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
             disabled={aiLoading}
           >
             {aiLoading ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
+              <ActivityIndicator size="small" color="#5C3E00" />
             ) : (
-              <Text style={styles.aiButtonText}>Ask Advice</Text>
+              <Text style={styles.aiButtonText}>Generate Insight ✨</Text>
             )}
           </TouchableOpacity>
         </View>
@@ -255,23 +341,23 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
           </View>
         ) : (
           <Text style={styles.aiPlaceholder}>
-            Tap "Ask Advice" to get encouraging budget tips and creative, free date ideas tailored to your recent habits!
+            Tap "Generate Insight" for warm budget encouragement and creative, zero-cost romantic date ideas tailored to your goals.
           </Text>
         )}
       </View>
 
-      {/* Collaborative Savings Goals Section */}
+      {/* 5. COLLABORATIVE SAVINGS GOALS */}
       <View style={styles.sectionHeader}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Target size={18} color={COLORS.WarmCharcoal} />
-          <Text style={styles.sectionTitle}>Collaborative Savings Goals</Text>
+          <Text style={styles.sectionTitle}>Shared Dream Goals</Text>
         </View>
         <TouchableOpacity
           style={styles.addMiniButton}
           onPress={() => setGoalModalOpen(true)}
         >
-          <Plus size={14} color={COLORS.RoseCoral} />
-          <Text style={styles.addMiniText}>New Goal</Text>
+          <Plus size={13} color={COLORS.RoseCoral} />
+          <Text style={styles.addMiniText}>New Dream</Text>
         </TouchableOpacity>
       </View>
 
@@ -280,33 +366,46 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
         return (
           <View key={g.id} style={styles.goalCard}>
             <View style={styles.goalTopRow}>
-              <Text style={styles.goalTitle}>{g.title}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={styles.goalEmoji}>{g.emoji || '✨'}</Text>
+                <View>
+                  <Text style={styles.goalTitle}>{g.title}</Text>
+                  <Text style={styles.goalPercent}>
+                    {Math.round(goalRatio * 100)}% funded
+                  </Text>
+                </View>
+              </View>
               <Text style={styles.goalAmount}>
-                ${g.currentSaved.toFixed(0)} / ${g.targetAmount.toFixed(0)}
+                ${g.currentSaved.toFixed(0)}{' '}
+                <Text style={{ color: COLORS.WarmCharcoalLight, fontSize: 12 }}>
+                  / ${g.targetAmount.toFixed(0)}
+                </Text>
               </Text>
             </View>
+
             <View style={styles.goalTrack}>
               <View
                 style={[styles.goalFill, { width: `${goalRatio * 100}%` }]}
               />
             </View>
-            <View style={styles.goalBottomRow}>
-              <Text style={styles.goalPercent}>
-                {Math.round(goalRatio * 100)}% achieved
-              </Text>
-              <TouchableOpacity
-                style={styles.contributeButton}
-                onPress={() => onContributeSavings(g.id, 25)}
-              >
-                <TrendingUp size={12} color="#FFFFFF" style={{ marginRight: 4 }} />
-                <Text style={styles.contributeText}>+ $25 Deposit</Text>
-              </TouchableOpacity>
+
+            <View style={styles.depositRow}>
+              {[15, 50, 100].map((amt) => (
+                <TouchableOpacity
+                  key={amt}
+                  style={styles.depositChip}
+                  onPress={() => contributeSavings(g.id, amt)}
+                >
+                  <TrendingUp size={11} color={COLORS.SageGreen} />
+                  <Text style={styles.depositChipText}>+${amt}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
         );
       })}
 
-      {/* Shared Spending Ledger Section */}
+      {/* 6. SHARED SPENDING LEDGER */}
       <View style={[styles.sectionHeader, { marginTop: 14 }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <DollarSign size={18} color={COLORS.WarmCharcoal} />
@@ -314,21 +413,53 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
         </View>
         <TouchableOpacity
           style={styles.addExpenseButton}
-          onPress={() => setExpenseModalOpen(true)}
+          onPress={() => {
+            setPaidBy(couple.activeUser);
+            setExpenseModalOpen(true);
+          }}
         >
           <Plus size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
           <Text style={styles.addExpenseText}>Add Expense</Text>
         </TouchableOpacity>
       </View>
 
-      {expenses.length === 0 ? (
-        <View style={styles.emptyLedger}>
-          <Text style={styles.emptyLedgerText}>No expenses logged yet.</Text>
-        </View>
-      ) : (
-        expenses.map((e) => (
+      {/* Filter Payer Pills */}
+      <View style={styles.filterRow}>
+        {['ALL', couple.partner1Name, couple.partner2Name, 'Shared'].map((f) => (
+          <TouchableOpacity
+            key={f}
+            style={[
+              styles.filterPill,
+              filterPayer === f && styles.filterPillActive,
+            ]}
+            onPress={() => setFilterPayer(f)}
+          >
+            <Text
+              style={[
+                styles.filterPillText,
+                filterPayer === f && styles.filterPillTextActive,
+              ]}
+            >
+              {f === 'ALL' ? 'All Entries' : `Paid by ${f}`}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {filteredExpenses.map((e) => {
+        const catMeta =
+          CATEGORIES.find((c) => c.name === e.category) || CATEGORIES[5];
+        return (
           <View key={e.id} style={styles.expenseItem}>
-            <View style={{ flex: 1 }}>
+            <View
+              style={[
+                styles.expenseEmojiCircle,
+                { backgroundColor: `${catMeta.color}18` },
+              ]}
+            >
+              <Text style={{ fontSize: 16 }}>{catMeta.emoji}</Text>
+            </View>
+            <View style={{ flex: 1, marginLeft: 10 }}>
               <Text style={styles.expenseTitle}>{e.title}</Text>
               <View style={styles.expenseMeta}>
                 <Text style={styles.expenseCategory}>{e.category}</Text>
@@ -339,15 +470,15 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
             <Text style={styles.expenseAmount}>${e.amount.toFixed(2)}</Text>
             <TouchableOpacity
               style={styles.deleteButton}
-              onPress={() => onDeleteExpense(e.id)}
+              onPress={() => deleteExpense(e.id)}
             >
-              <Trash2 size={16} color="#AAA" />
+              <Trash2 size={15} color="#B8AFA8" />
             </TouchableOpacity>
           </View>
-        ))
-      )}
+        );
+      })}
 
-      {/* Add Expense Modal */}
+      {/* MODAL 1: ADD EXPENSE */}
       <Modal
         visible={expenseModalOpen}
         transparent
@@ -358,11 +489,11 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
           <View style={styles.modalCard}>
             <Text style={styles.modalHeading}>Log Shared Expense</Text>
 
-            <Text style={styles.inputLabel}>Title</Text>
+            <Text style={styles.inputLabel}>Description</Text>
             <TextInput
               style={styles.input}
               placeholder="e.g. Romantic Lavender Café Date"
-              placeholderTextColor="#AAA"
+              placeholderTextColor="#A89F98"
               value={title}
               onChangeText={setTitle}
             />
@@ -371,13 +502,13 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
             <TextInput
               style={styles.input}
               placeholder="e.g. 34.50"
-              placeholderTextColor="#AAA"
+              placeholderTextColor="#A89F98"
               keyboardType="decimal-pad"
               value={amount}
               onChangeText={setAmount}
             />
 
-            <Text style={styles.inputLabel}>Paid By</Text>
+            <Text style={styles.inputLabel}>Who Paid?</Text>
             <View style={styles.payerRow}>
               {[couple.partner1Name, couple.partner2Name, 'Shared'].map((p) => (
                 <TouchableOpacity
@@ -408,20 +539,20 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
             >
               {CATEGORIES.map((cat) => (
                 <TouchableOpacity
-                  key={cat}
+                  key={cat.name}
                   style={[
                     styles.categoryChip,
-                    category === cat && styles.selectedCategoryChip,
+                    category === cat.name && styles.selectedCategoryChip,
                   ]}
-                  onPress={() => setCategory(cat)}
+                  onPress={() => setCategory(cat.name)}
                 >
                   <Text
                     style={[
                       styles.categoryChipText,
-                      category === cat && styles.selectedCategoryChipText,
+                      category === cat.name && styles.selectedCategoryChipText,
                     ]}
                   >
-                    {cat}
+                    {cat.emoji} {cat.name}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -445,7 +576,7 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
         </View>
       </Modal>
 
-      {/* Add Goal Modal */}
+      {/* MODAL 2: ADD SAVINGS GOAL */}
       <Modal
         visible={goalModalOpen}
         transparent
@@ -454,13 +585,29 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
       >
         <View style={styles.modalBackdrop}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalHeading}>Create Savings Goal</Text>
+            <Text style={styles.modalHeading}>New Collaborative Dream</Text>
 
-            <Text style={styles.inputLabel}>Goal Name</Text>
+            <Text style={styles.inputLabel}>Icon Emoji</Text>
+            <View style={styles.payerRow}>
+              {['✈️', '🏡', '📽️', '🍣', '💍', '🚗'].map((em) => (
+                <TouchableOpacity
+                  key={em}
+                  style={[
+                    styles.payerOption,
+                    goalEmoji === em && styles.selectedPayer,
+                  ]}
+                  onPress={() => setGoalEmoji(em)}
+                >
+                  <Text style={{ fontSize: 18 }}>{em}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Text style={styles.inputLabel}>Dream Title</Text>
             <TextInput
               style={styles.input}
-              placeholder="e.g. Our Tokyo Dream Trip ✈️"
-              placeholderTextColor="#AAA"
+              placeholder="e.g. Autumn Kyoto Trip"
+              placeholderTextColor="#A89F98"
               value={goalTitle}
               onChangeText={setGoalTitle}
             />
@@ -468,8 +615,8 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
             <Text style={styles.inputLabel}>Target Amount ($)</Text>
             <TextInput
               style={styles.input}
-              placeholder="e.g. 3500.00"
-              placeholderTextColor="#AAA"
+              placeholder="e.g. 3500"
+              placeholderTextColor="#A89F98"
               keyboardType="decimal-pad"
               value={goalTarget}
               onChangeText={setGoalTarget}
@@ -480,7 +627,7 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
               onPress={handleCreateGoal}
             >
               <CheckCircle2 size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
-              <Text style={styles.modalSubmitText}>Start Saving Together</Text>
+              <Text style={styles.modalSubmitText}>Create Savings Goal</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -492,9 +639,36 @@ export const TreasuryScreen: React.FC<TreasuryScreenProps> = ({
           </View>
         </View>
       </Modal>
+
+      {/* MODAL 3: EDIT MONTHLY BUDGET LIMIT */}
+      <Modal
+        visible={limitModalOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setLimitModalOpen(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalHeading}>Monthly Budget Limit ($)</Text>
+            <TextInput
+              style={styles.input}
+              value={limitInput}
+              onChangeText={setLimitInput}
+              keyboardType="decimal-pad"
+              placeholder="1200"
+            />
+            <TouchableOpacity
+              style={styles.modalSubmitButton}
+              onPress={handleSaveLimit}
+            >
+              <Text style={styles.modalSubmitText}>Update Limit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -503,11 +677,11 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    paddingBottom: 90,
+    paddingBottom: 40,
   },
   budgetCard: {
     backgroundColor: COLORS.CozyCream,
-    borderRadius: 22,
+    borderRadius: 24,
     padding: 18,
     borderWidth: 1,
     borderColor: COLORS.ShadowBeige,
@@ -517,31 +691,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
+  },
+  walletIconBox: {
+    width: 30,
+    height: 30,
+    borderRadius: 10,
+    backgroundColor: COLORS.SoftRose,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
   },
   budgetLabel: {
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '900',
     color: COLORS.WarmCharcoal,
-    marginLeft: 6,
   },
-  budgetPercent: {
-    fontSize: 12,
+  editLimitBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3ECE4',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+    gap: 4,
+  },
+  editLimitText: {
+    fontSize: 11,
     fontWeight: '700',
     color: COLORS.WarmCharcoalMuted,
   },
-  budgetNumbers: {
+  budgetNumbersRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
     marginBottom: 10,
   },
   totalSpentText: {
-    fontSize: 32,
+    fontSize: 34,
     fontWeight: '900',
     color: COLORS.WarmCharcoal,
   },
   limitText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: COLORS.WarmCharcoalMuted,
     marginLeft: 6,
@@ -551,21 +742,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#EBE2D8',
     borderRadius: 5,
     overflow: 'hidden',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   progressBarFill: {
     height: '100%',
     borderRadius: 5,
   },
-  budgetRemaining: {
+  budgetMetaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  budgetMetaItem: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.WarmCharcoalMuted,
-    textAlign: 'right',
+  },
+  budgetSafeText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: COLORS.SageGreen,
   },
   settlementCard: {
     backgroundColor: '#ECFDF5',
-    borderRadius: 18,
+    borderRadius: 20,
     padding: 16,
     borderWidth: 1,
     borderColor: '#A7F3D0',
@@ -573,29 +772,90 @@ const styles = StyleSheet.create({
   },
   settlementTop: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 6,
   },
   settlementHeading: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '800',
     color: '#065F46',
     marginLeft: 6,
     textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  settleUpBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#059669',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+  },
+  settleUpBtnText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '800',
   },
   settlementResult: {
-    fontSize: 20,
+    fontSize: 21,
     fontWeight: '900',
-    letterSpacing: 0.2,
+    color: '#064E3B',
   },
   settlementSub: {
     fontSize: 11,
     color: '#047857',
     marginTop: 4,
   },
-  aiCard: {
+  breakdownCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: COLORS.BorderSubtle,
+    marginBottom: 14,
+  },
+  breakdownHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  breakdownTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: COLORS.WarmCharcoal,
+    marginLeft: 6,
+  },
+  stackedBar: {
+    height: 10,
+    borderRadius: 5,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  legendWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  legendChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  legendDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 4,
+  },
+  legendLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: COLORS.WarmCharcoalMuted,
+  },
+  aiCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
     padding: 16,
     borderWidth: 1,
     borderColor: '#FDE68A',
@@ -609,32 +869,32 @@ const styles = StyleSheet.create({
   },
   aiTitle: {
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '900',
     color: COLORS.WarmCharcoal,
     marginLeft: 6,
   },
   aiButton: {
     backgroundColor: COLORS.HoneyYellow,
     paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
   },
   aiButtonText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '800',
     color: '#5C3E00',
   },
   adviceBox: {
     backgroundColor: '#FFFBEB',
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 14,
     borderLeftWidth: 3,
     borderLeftColor: COLORS.HoneyYellow,
   },
   adviceText: {
     fontSize: 13,
     color: COLORS.WarmCharcoal,
-    lineHeight: 19,
+    lineHeight: 20,
     fontStyle: 'italic',
   },
   aiPlaceholder: {
@@ -650,7 +910,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 15,
-    fontWeight: '800',
+    fontWeight: '900',
     color: COLORS.WarmCharcoal,
     marginLeft: 6,
   },
@@ -658,114 +918,144 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.SoftRose,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 10,
-  },
-  addMiniText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: COLORS.RoseCoral,
-    marginLeft: 3,
-  },
-  addExpenseButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.RoseCoral,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 10,
   },
-  addExpenseText: {
+  addMiniText: {
     fontSize: 11,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontWeight: '800',
+    color: COLORS.RoseCoral,
+    marginLeft: 4,
   },
   goalCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 14,
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: COLORS.BorderSubtle,
     marginBottom: 10,
   },
   goalTopRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  goalEmoji: {
+    fontSize: 24,
+    marginRight: 10,
   },
   goalTitle: {
     fontSize: 14,
     fontWeight: '800',
     color: COLORS.WarmCharcoal,
   },
+  goalPercent: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: COLORS.WarmCharcoalMuted,
+  },
   goalAmount: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: COLORS.RoseCoral,
+    fontSize: 15,
+    fontWeight: '900',
+    color: COLORS.SageGreen,
   },
   goalTrack: {
     height: 8,
     backgroundColor: '#EBE2D8',
     borderRadius: 4,
     overflow: 'hidden',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   goalFill: {
     height: '100%',
-    backgroundColor: '#10B981',
+    backgroundColor: COLORS.SageGreen,
     borderRadius: 4,
   },
-  goalBottomRow: {
+  depositRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 8,
   },
-  goalPercent: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: COLORS.WarmCharcoalMuted,
-  },
-  contributeButton: {
+  depositChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#10B981',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    backgroundColor: COLORS.SageGreenSoft,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    gap: 4,
   },
-  contributeText: {
+  depositChipText: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
+    color: COLORS.SageGreen,
+  },
+  addExpenseButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.RoseCoral,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  addExpenseText: {
+    fontSize: 11,
+    fontWeight: '800',
     color: '#FFFFFF',
   },
-  emptyLedger: {
-    padding: 20,
-    alignItems: 'center',
+  filterRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginBottom: 12,
   },
-  emptyLedgerText: {
-    fontSize: 13,
+  filterPill: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.BorderSubtle,
+  },
+  filterPillActive: {
+    backgroundColor: COLORS.WarmCharcoal,
+    borderColor: COLORS.WarmCharcoal,
+  },
+  filterPillText: {
+    fontSize: 11,
+    fontWeight: '700',
     color: COLORS.WarmCharcoalMuted,
+  },
+  filterPillTextActive: {
+    color: '#FFFFFF',
   },
   expenseItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 12,
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: COLORS.BorderSubtle,
     marginBottom: 8,
+  },
+  expenseEmojiCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   expenseTitle: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.WarmCharcoal,
   },
   expenseMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 3,
+    marginTop: 2,
   },
   expenseCategory: {
     fontSize: 11,
@@ -774,7 +1064,7 @@ const styles = StyleSheet.create({
   },
   expenseDot: {
     fontSize: 11,
-    color: '#AAA',
+    color: '#CCC',
     marginHorizontal: 5,
   },
   expensePaidBy: {
@@ -784,7 +1074,7 @@ const styles = StyleSheet.create({
   },
   expenseAmount: {
     fontSize: 15,
-    fontWeight: '800',
+    fontWeight: '900',
     color: COLORS.WarmCharcoal,
     marginRight: 10,
   },
@@ -793,7 +1083,7 @@ const styles = StyleSheet.create({
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(42, 36, 33, 0.55)',
     justifyContent: 'flex-end',
   },
   modalCard: {
@@ -806,13 +1096,13 @@ const styles = StyleSheet.create({
   },
   modalHeading: {
     fontSize: 18,
-    fontWeight: '800',
+    fontWeight: '900',
     color: COLORS.WarmCharcoal,
     marginBottom: 16,
   },
   inputLabel: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.WarmCharcoal,
     marginBottom: 6,
   },
@@ -831,6 +1121,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 14,
+    gap: 6,
   },
   payerOption: {
     flex: 1,
@@ -840,7 +1131,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 8,
     alignItems: 'center',
-    marginHorizontal: 3,
   },
   selectedPayer: {
     borderColor: COLORS.RoseCoral,
@@ -859,7 +1149,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.ShadowBeige,
     paddingHorizontal: 12,
-    paddingVertical: 7,
+    paddingVertical: 8,
     borderRadius: 16,
     marginRight: 6,
   },
@@ -869,7 +1159,7 @@ const styles = StyleSheet.create({
   },
   categoryChipText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.WarmCharcoal,
   },
   selectedCategoryChipText: {
@@ -878,16 +1168,16 @@ const styles = StyleSheet.create({
   modalSubmitButton: {
     backgroundColor: COLORS.RoseCoral,
     borderRadius: 14,
-    paddingVertical: 13,
+    paddingVertical: 14,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   modalSubmitText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   cancelButton: {
     paddingVertical: 8,
@@ -895,7 +1185,7 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.WarmCharcoalMuted,
   },
 });

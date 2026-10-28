@@ -7,6 +7,12 @@ import {
   Expense,
   SavingGoal,
   BudgetLimit,
+  DailyQuestion,
+  LoveLetter,
+  LoveCoupon,
+  BucketItem,
+  DiaryEntry,
+  StickyNote,
 } from '../types';
 import {
   INITIAL_COUPLE,
@@ -15,23 +21,57 @@ import {
   INITIAL_SNAP,
   INITIAL_EXPENSES,
   INITIAL_SAVINGS,
+  INITIAL_DAILY_QUESTION,
+  INITIAL_LETTERS,
+  INITIAL_COUPONS,
+  INITIAL_BUCKET_LIST,
 } from '../constants/theme';
 
 const KEYS = {
-  COUPLE: '@wespace_couple',
-  PET: '@wespace_pet',
-  MEMORIES: '@wespace_memories',
-  SNAP: '@wespace_snap',
-  EXPENSES: '@wespace_expenses',
-  BUDGET_LIMIT: '@wespace_budget_limit',
-  SAVINGS: '@wespace_savings',
+  COUPLE: '@wespace_v2_couple',
+  PET: '@wespace_v2_pet',
+  MEMORIES: '@wespace_v2_memories',
+  DIARY_ENTRIES: '@wespace_v2_diary_entries',
+  SNAP: '@wespace_v2_snap',
+  EXPENSES: '@wespace_v2_expenses',
+  BUDGET_LIMIT: '@wespace_v2_budget_limit',
+  SAVINGS: '@wespace_v2_savings',
+  DAILY_QUESTION: '@wespace_v2_daily_question',
+  LETTERS: '@wespace_v2_letters',
+  COUPONS: '@wespace_v2_coupons',
+  BUCKET: '@wespace_v2_bucket',
+  STICKY_NOTES: '@wespace_v2_sticky_notes',
 };
+
+const INITIAL_STICKY_NOTES: StickyNote[] = [
+  {
+    id: 'sn_1',
+    text: 'Left warm cinnamon cookies on the kitchen counter for you! 🍪',
+    sender: 'Leo',
+    color: '#FEF9C3',
+    time: '1h ago',
+  },
+  {
+    id: 'sn_2',
+    text: 'Spinning Chet Baker vinyl by the fireplace tonight... 🎶',
+    sender: 'Mia',
+    color: '#FFE4E6',
+    time: '25m ago',
+  },
+  {
+    id: 'sn_3',
+    text: 'Don’t forget to drink water today my love 💧💕',
+    sender: 'Leo',
+    color: '#E0F2FE',
+    time: '10m ago',
+  },
+];
 
 export const storage = {
   async getCouple(): Promise<CoupleState> {
     try {
       const data = await AsyncStorage.getItem(KEYS.COUPLE);
-      return data ? JSON.parse(data) : INITIAL_COUPLE;
+      return data ? { ...INITIAL_COUPLE, ...JSON.parse(data) } : INITIAL_COUPLE;
     } catch {
       return INITIAL_COUPLE;
     }
@@ -44,7 +84,7 @@ export const storage = {
   async getPet(): Promise<PetState> {
     try {
       const data = await AsyncStorage.getItem(KEYS.PET);
-      return data ? JSON.parse(data) : INITIAL_PET;
+      return data ? { ...INITIAL_PET, ...JSON.parse(data) } : INITIAL_PET;
     } catch {
       return INITIAL_PET;
     }
@@ -67,10 +107,23 @@ export const storage = {
     await AsyncStorage.setItem(KEYS.MEMORIES, JSON.stringify(memories));
   },
 
+  async getDiaryEntries(): Promise<DiaryEntry[]> {
+    try {
+      const data = await AsyncStorage.getItem(KEYS.DIARY_ENTRIES);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async saveDiaryEntries(entries: DiaryEntry[]): Promise<void> {
+    await AsyncStorage.setItem(KEYS.DIARY_ENTRIES, JSON.stringify(entries));
+  },
+
   async getSnap(): Promise<SnapPhoto | null> {
     try {
       const data = await AsyncStorage.getItem(KEYS.SNAP);
-      return data ? JSON.parse(data) : INITIAL_SNAP;
+      return data ? { ...INITIAL_SNAP, ...JSON.parse(data) } : INITIAL_SNAP;
     } catch {
       return INITIAL_SNAP;
     }
@@ -117,6 +170,71 @@ export const storage = {
 
   async saveSavings(savings: SavingGoal[]): Promise<void> {
     await AsyncStorage.setItem(KEYS.SAVINGS, JSON.stringify(savings));
+  },
+
+  async getDailyQuestion(): Promise<DailyQuestion> {
+    try {
+      const data = await AsyncStorage.getItem(KEYS.DAILY_QUESTION);
+      return data ? JSON.parse(data) : INITIAL_DAILY_QUESTION;
+    } catch {
+      return INITIAL_DAILY_QUESTION;
+    }
+  },
+
+  async saveDailyQuestion(dq: DailyQuestion): Promise<void> {
+    await AsyncStorage.setItem(KEYS.DAILY_QUESTION, JSON.stringify(dq));
+  },
+
+  async getLetters(): Promise<LoveLetter[]> {
+    try {
+      const data = await AsyncStorage.getItem(KEYS.LETTERS);
+      return data ? JSON.parse(data) : INITIAL_LETTERS;
+    } catch {
+      return INITIAL_LETTERS;
+    }
+  },
+
+  async saveLetters(letters: LoveLetter[]): Promise<void> {
+    await AsyncStorage.setItem(KEYS.LETTERS, JSON.stringify(letters));
+  },
+
+  async getCoupons(): Promise<LoveCoupon[]> {
+    try {
+      const data = await AsyncStorage.getItem(KEYS.COUPONS);
+      return data ? JSON.parse(data) : INITIAL_COUPONS;
+    } catch {
+      return INITIAL_COUPONS;
+    }
+  },
+
+  async saveCoupons(coupons: LoveCoupon[]): Promise<void> {
+    await AsyncStorage.setItem(KEYS.COUPONS, JSON.stringify(coupons));
+  },
+
+  async getBucketList(): Promise<BucketItem[]> {
+    try {
+      const data = await AsyncStorage.getItem(KEYS.BUCKET);
+      return data ? JSON.parse(data) : INITIAL_BUCKET_LIST;
+    } catch {
+      return INITIAL_BUCKET_LIST;
+    }
+  },
+
+  async saveBucketList(items: BucketItem[]): Promise<void> {
+    await AsyncStorage.setItem(KEYS.BUCKET, JSON.stringify(items));
+  },
+
+  async getStickyNotes(): Promise<StickyNote[]> {
+    try {
+      const data = await AsyncStorage.getItem(KEYS.STICKY_NOTES);
+      return data ? JSON.parse(data) : INITIAL_STICKY_NOTES;
+    } catch {
+      return INITIAL_STICKY_NOTES;
+    }
+  },
+
+  async saveStickyNotes(notes: StickyNote[]): Promise<void> {
+    await AsyncStorage.setItem(KEYS.STICKY_NOTES, JSON.stringify(notes));
   },
 
   async resetAll(): Promise<void> {

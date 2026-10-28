@@ -8,9 +8,10 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
-import { PetState, PetType, CoupleState } from '../types';
-import { COLORS } from '../constants/theme';
-import { PouPetCanvas } from '../components/pet/PouPetCanvas';
+import { useWeSpace } from '../../context/WeSpaceContext';
+import { PetType, PetAccessory } from '../../types';
+import { COLORS } from '../../constants/theme';
+import { PouPetCanvas } from '../../components/pet/PouPetCanvas';
 import {
   Utensils,
   Gamepad2,
@@ -20,19 +21,22 @@ import {
   Sun,
   Edit2,
   Check,
+  Award,
+  Shirt,
 } from 'lucide-react-native';
 
-interface PetScreenProps {
-  couple: CoupleState;
-  pet: PetState;
-  onUpdatePet: (pet: PetState) => void;
-}
+const ACCESSORIES: { id: PetAccessory; label: string; emoji: string }[] = [
+  { id: 'CROWN', label: 'Crown', emoji: '👑' },
+  { id: 'BOW', label: 'Silk Bow', emoji: '🎀' },
+  { id: 'GLASSES', label: 'Shades', emoji: '🕶️' },
+  { id: 'FLOWER', label: 'Daisy', emoji: '🌸' },
+  { id: 'SCARF', label: 'Scarf', emoji: '🧣' },
+  { id: 'NONE', label: 'Natural', emoji: '✨' },
+];
 
-export const PetScreen: React.FC<PetScreenProps> = ({
-  couple,
-  pet,
-  onUpdatePet,
-}) => {
+export default function PetCompanionScreen() {
+  const { couple, pet, updatePet } = useWeSpace();
+
   const [activeParticle, setActiveParticle] = useState<string | null>(null);
   const [renameModalOpen, setRenameModalOpen] = useState(false);
   const [petNameInput, setPetNameInput] = useState(pet.petName);
@@ -42,97 +46,107 @@ export const PetScreen: React.FC<PetScreenProps> = ({
     setTimeout(() => setActiveParticle(null), 1000);
   };
 
-  // 4.2 Actions from blueprint
+  const handleBellyRub = () => {
+    if (pet.isSleeping) {
+      triggerParticle('💤');
+      return;
+    }
+    updatePet({
+      ...pet,
+      happiness: Math.min(100, pet.happiness + 8),
+      xp: (pet.xp || 0) + 10,
+      lastPlayedBy: couple.activeUser,
+      lastUpdated: Date.now(),
+    });
+    triggerParticle('💕');
+  };
+
   const handleFeed = () => {
     if (pet.isSleeping) return;
-    const updated: PetState = {
+    updatePet({
       ...pet,
       hunger: Math.min(100, pet.hunger + 25),
       cleanliness: Math.max(0, pet.cleanliness - 15),
       health: Math.min(100, pet.health + 5),
+      xp: (pet.xp || 0) + 15,
       lastFedBy: couple.activeUser,
       lastUpdated: Date.now(),
-    };
-    onUpdatePet(updated);
+    });
     triggerParticle('🍖');
   };
 
   const handlePlay = () => {
     if (pet.isSleeping) return;
-    const updated: PetState = {
+    updatePet({
       ...pet,
       happiness: Math.min(100, pet.happiness + 20),
       energy: Math.max(0, pet.energy - 15),
       cleanliness: Math.max(0, pet.cleanliness - 10),
+      xp: (pet.xp || 0) + 20,
       lastPlayedBy: couple.activeUser,
       lastUpdated: Date.now(),
-    };
-    onUpdatePet(updated);
+    });
     triggerParticle('🎾');
   };
 
   const handleClean = () => {
-    const updated: PetState = {
+    updatePet({
       ...pet,
       cleanliness: 100,
       happiness: Math.min(100, pet.happiness + 15),
       health: Math.min(100, pet.health + 10),
+      xp: (pet.xp || 0) + 15,
       lastCleanedBy: couple.activeUser,
       lastUpdated: Date.now(),
-    };
-    onUpdatePet(updated);
+    });
     triggerParticle('🧼');
   };
 
   const handleHeal = () => {
-    const updated: PetState = {
+    updatePet({
       ...pet,
       health: 100,
       happiness: Math.min(100, pet.happiness + 10),
+      xp: (pet.xp || 0) + 15,
       lastHealedBy: couple.activeUser,
       lastUpdated: Date.now(),
-    };
-    onUpdatePet(updated);
+    });
     triggerParticle('💊');
   };
 
   const handleToggleSleep = () => {
     if (pet.isSleeping) {
-      // Waking up
-      const updated: PetState = {
+      updatePet({
         ...pet,
         isSleeping: false,
         energy: 100,
         happiness: Math.min(100, pet.happiness + 10),
+        xp: (pet.xp || 0) + 10,
         lastUpdated: Date.now(),
-      };
-      onUpdatePet(updated);
+      });
       triggerParticle('☀️');
     } else {
-      // Going to sleep
-      const updated: PetState = {
+      updatePet({
         ...pet,
         isSleeping: true,
         lastUpdated: Date.now(),
-      };
-      onUpdatePet(updated);
+      });
       triggerParticle('💤');
     }
   };
 
   const handleSpeciesChange = (type: PetType) => {
-    onUpdatePet({
-      ...pet,
-      petType: type,
-    });
+    updatePet({ ...pet, petType: type });
+  };
+
+  const handleAccessoryChange = (accessory: PetAccessory) => {
+    updatePet({ ...pet, accessory });
+    triggerParticle('✨');
   };
 
   const handleRename = () => {
     if (!petNameInput.trim()) return;
-    onUpdatePet({
-      ...pet,
-      petName: petNameInput.trim(),
-    });
+    updatePet({ ...pet, petName: petNameInput.trim() });
     setRenameModalOpen(false);
   };
 
@@ -143,26 +157,46 @@ export const PetScreen: React.FC<PetScreenProps> = ({
         <Text style={[styles.gaugeValue, { color }]}>{value}%</Text>
       </View>
       <View style={styles.gaugeTrack}>
-        <View style={[styles.gaugeFill, { width: `${value}%`, backgroundColor: color }]} />
+        <View
+          style={[
+            styles.gaugeFill,
+            { width: `${value}%`, backgroundColor: color },
+          ]}
+        />
       </View>
     </View>
   );
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Pet Header Card */}
-      <View style={styles.petHeaderCard}>
-        <View style={styles.titleRow}>
-          <Text style={styles.petName}>{pet.petName}</Text>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* 1. PET NURSERY STAGE CARD */}
+      <View style={styles.nurseryCard}>
+        {/* Top Level & Name Row */}
+        <View style={styles.topRow}>
+          <View style={styles.levelBadge}>
+            <Award size={13} color="#B45309" />
+            <Text style={styles.levelText}>
+              Lv. {pet.level || 4} • {pet.xp || 65}/100 XP
+            </Text>
+          </View>
+
           <TouchableOpacity
-            style={styles.renameButton}
-            onPress={() => setRenameModalOpen(true)}
+            style={styles.renameChip}
+            onPress={() => {
+              setPetNameInput(pet.petName);
+              setRenameModalOpen(true);
+            }}
           >
-            <Edit2 size={14} color={COLORS.RoseCoral} />
+            <Text style={styles.petNameTitle}>{pet.petName}</Text>
+            <Edit2 size={13} color={COLORS.RoseCoral} style={{ marginLeft: 5 }} />
           </TouchableOpacity>
         </View>
 
-        {/* Pet Type Switcher */}
+        {/* Species Selector */}
         <View style={styles.speciesRow}>
           {(['CAT', 'DOG', 'BIRD', 'BUNNY'] as PetType[]).map((type) => (
             <TouchableOpacity
@@ -191,36 +225,68 @@ export const PetScreen: React.FC<PetScreenProps> = ({
           ))}
         </View>
 
-        {/* Procedural Pou Canvas */}
-        <PouPetCanvas pet={pet} activeParticle={activeParticle} />
+        {/* Procedural Pou Canvas with Tap-to-Cuddle */}
+        <PouPetCanvas
+          pet={pet}
+          activeParticle={activeParticle}
+          onPetTap={handleBellyRub}
+        />
 
-        {/* Sleeping / Mood Status */}
-        <Text style={styles.statusMood}>
-          {pet.isSleeping
-            ? '💤 Mocha is having sweet dreams...'
-            : pet.health < 35 || pet.happiness < 35
-            ? '🥺 Feeling a bit down, needs some love!'
-            : pet.cleanliness < 75
-            ? '🛁 A bit messy from playing outside!'
-            : '✨ Joyful and cozy in your sanctuary!'}
-        </Text>
+        {/* Mood Banner */}
+        <View style={styles.moodBanner}>
+          <Text style={styles.moodBannerText}>
+            {pet.isSleeping
+              ? `💤 ${pet.petName} is curled up having sweet dreams...`
+              : pet.health < 35 || pet.happiness < 35
+              ? `🥺 ${pet.petName} needs extra cuddles and care!`
+              : pet.cleanliness < 75
+              ? `🛁 ${pet.petName} got muddy playing—time for a warm bath!`
+              : `✨ ${pet.petName} is purring with happiness in your sanctuary!`}
+          </Text>
+        </View>
       </View>
 
-      {/* 5-Parameter Tamagotchi Gauges */}
-      <View style={styles.gaugesCard}>
-        <Text style={styles.gaugesHeading}>Vital Energy & Well-being</Text>
-        {renderGauge('Hunger', pet.hunger, '#F97316')}
-        {renderGauge('Happiness', pet.happiness, '#EC4899')}
-        {renderGauge('Energy', pet.energy, COLORS.HoneyYellow)}
-        {renderGauge('Cleanliness', pet.cleanliness, COLORS.PastelBlue)}
-        {renderGauge('Health', pet.health, '#10B981')}
+      {/* 2. WEARABLE PET BOUTIQUE */}
+      <View style={styles.boutiqueCard}>
+        <View style={styles.cardHeaderRow}>
+          <Shirt size={16} color={COLORS.RoseCoral} />
+          <Text style={styles.cardHeaderTitle}>Pet Wardrobe & Accessories</Text>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 8 }}
+        >
+          {ACCESSORIES.map((acc) => {
+            const isSelected = (pet.accessory || 'NONE') === acc.id;
+            return (
+              <TouchableOpacity
+                key={acc.id}
+                style={[
+                  styles.accessoryChip,
+                  isSelected && styles.accessoryChipSelected,
+                ]}
+                onPress={() => handleAccessoryChange(acc.id)}
+              >
+                <Text style={{ fontSize: 18 }}>{acc.emoji}</Text>
+                <Text
+                  style={[
+                    styles.accessoryLabel,
+                    isSelected && styles.accessoryLabelSelected,
+                  ]}
+                >
+                  {acc.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
       </View>
 
-      {/* Interaction Action Controls */}
+      {/* 3. CO-CARE INTERACTION BUTTONS */}
       <View style={styles.actionsCard}>
-        <Text style={styles.actionsHeading}>Co-Care Actions</Text>
+        <Text style={styles.cardHeaderTitle}>Co-Parenting Care Actions</Text>
         <View style={styles.actionGrid}>
-          {/* Feed */}
           <TouchableOpacity
             style={[styles.actionBtn, pet.isSleeping && styles.disabledBtn]}
             onPress={handleFeed}
@@ -233,7 +299,6 @@ export const PetScreen: React.FC<PetScreenProps> = ({
             <Text style={styles.actionBtnSub}>+25 Hunger</Text>
           </TouchableOpacity>
 
-          {/* Play */}
           <TouchableOpacity
             style={[styles.actionBtn, pet.isSleeping && styles.disabledBtn]}
             onPress={handlePlay}
@@ -246,29 +311,29 @@ export const PetScreen: React.FC<PetScreenProps> = ({
             <Text style={styles.actionBtnSub}>+20 Happy</Text>
           </TouchableOpacity>
 
-          {/* Wash */}
           <TouchableOpacity style={styles.actionBtn} onPress={handleClean}>
             <View style={[styles.actionIcon, { backgroundColor: '#E0F2FE' }]}>
               <Sparkles size={20} color="#0284C7" />
             </View>
             <Text style={styles.actionBtnLabel}>Wash 🧼</Text>
-            <Text style={styles.actionBtnSub}>Clean 100%</Text>
+            <Text style={styles.actionBtnSub}>100% Clean</Text>
           </TouchableOpacity>
 
-          {/* Heal */}
           <TouchableOpacity style={styles.actionBtn} onPress={handleHeal}>
             <View style={[styles.actionIcon, { backgroundColor: '#DCFCE7' }]}>
               <HeartPulse size={20} color="#16A34A" />
             </View>
             <Text style={styles.actionBtnLabel}>Heal 💊</Text>
-            <Text style={styles.actionBtnSub}>Health 100%</Text>
+            <Text style={styles.actionBtnSub}>100% Health</Text>
           </TouchableOpacity>
 
-          {/* Sleep Toggle */}
           <TouchableOpacity
             style={[
               styles.actionBtn,
-              pet.isSleeping && { borderColor: COLORS.HoneyYellow },
+              pet.isSleeping && {
+                borderColor: COLORS.HoneyYellow,
+                backgroundColor: '#FFFBEB',
+              },
             ]}
             onPress={handleToggleSleep}
           >
@@ -288,26 +353,58 @@ export const PetScreen: React.FC<PetScreenProps> = ({
               {pet.isSleeping ? 'Wake Up ☀️' : 'Sleep 💤'}
             </Text>
             <Text style={styles.actionBtnSub}>
-              {pet.isSleeping ? 'Restore' : 'Rest'}
+              {pet.isSleeping ? '100% Energy' : 'Rest Mode'}
             </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.actionBtn, pet.isSleeping && styles.disabledBtn]}
+            onPress={handleBellyRub}
+            disabled={pet.isSleeping}
+          >
+            <View style={[styles.actionIcon, { backgroundColor: COLORS.SoftRose }]}>
+              <Text style={{ fontSize: 18 }}>🥰</Text>
+            </View>
+            <Text style={styles.actionBtnLabel}>Cuddle 💕</Text>
+            <Text style={styles.actionBtnSub}>+10 XP</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Co-parenting Care History */}
+      {/* 4. 5-PARAMETER VITAL GAUGES */}
+      <View style={styles.gaugesCard}>
+        <Text style={[styles.cardHeaderTitle, { marginBottom: 12 }]}>
+          5-Parameter Vital Matrix
+        </Text>
+        {renderGauge('Hunger', pet.hunger, '#F97316')}
+        {renderGauge('Happiness', pet.happiness, '#EC4899')}
+        {renderGauge('Energy', pet.energy, COLORS.HoneyYellow)}
+        {renderGauge('Cleanliness', pet.cleanliness, COLORS.PastelBlue)}
+        {renderGauge('Health', pet.health, '#10B981')}
+      </View>
+
+      {/* 5. SHARED PARENTING LOG */}
       <View style={styles.historyCard}>
-        <Text style={styles.historyHeading}>Shared Parenting Moments</Text>
+        <Text style={styles.historyHeading}>Co-Parenting Activity Log</Text>
         <View style={styles.historyRow}>
-          <Text style={styles.historyItem}>🍖 Last fed by: <Text style={{ fontWeight: '700' }}>{pet.lastFedBy}</Text></Text>
-          <Text style={styles.historyItem}>🎾 Last played by: <Text style={{ fontWeight: '700' }}>{pet.lastPlayedBy}</Text></Text>
+          <Text style={styles.historyItem}>
+            🍖 Fed by <Text style={styles.boldText}>{pet.lastFedBy}</Text>
+          </Text>
+          <Text style={styles.historyItem}>
+            🎾 Played with <Text style={styles.boldText}>{pet.lastPlayedBy}</Text>
+          </Text>
         </View>
         <View style={styles.historyRow}>
-          <Text style={styles.historyItem}>🧼 Last washed by: <Text style={{ fontWeight: '700' }}>{pet.lastCleanedBy}</Text></Text>
-          <Text style={styles.historyItem}>💊 Last healed by: <Text style={{ fontWeight: '700' }}>{pet.lastHealedBy}</Text></Text>
+          <Text style={styles.historyItem}>
+            🧼 Washed by <Text style={styles.boldText}>{pet.lastCleanedBy}</Text>
+          </Text>
+          <Text style={styles.historyItem}>
+            💊 Healed by <Text style={styles.boldText}>{pet.lastHealedBy}</Text>
+          </Text>
         </View>
       </View>
 
-      {/* Rename Modal */}
+      {/* RENAME MODAL */}
       <Modal
         visible={renameModalOpen}
         transparent
@@ -316,13 +413,13 @@ export const PetScreen: React.FC<PetScreenProps> = ({
       >
         <View style={styles.modalBackdrop}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalHeading}>Rename Companion</Text>
+            <Text style={styles.modalHeading}>Rename Your Companion</Text>
             <TextInput
               style={styles.renameInput}
               value={petNameInput}
               onChangeText={setPetNameInput}
               placeholder="e.g. Mocha"
-              placeholderTextColor="#AAA"
+              placeholderTextColor="#A89F98"
             />
             <TouchableOpacity style={styles.modalSubmit} onPress={handleRename}>
               <Check size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
@@ -333,7 +430,7 @@ export const PetScreen: React.FC<PetScreenProps> = ({
       </Modal>
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -342,43 +439,65 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    paddingBottom: 90,
+    paddingBottom: 40,
   },
-  petHeaderCard: {
+  nurseryCard: {
     backgroundColor: COLORS.CozyCream,
-    borderRadius: 24,
+    borderRadius: 26,
     padding: 18,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: COLORS.ShadowBeige,
     marginBottom: 14,
   },
-  titleRow: {
+  topRow: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  levelBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
   },
-  petName: {
-    fontSize: 24,
+  levelText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#B45309',
+    marginLeft: 5,
+  },
+  renameChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.BorderSubtle,
+  },
+  petNameTitle: {
+    fontSize: 16,
     fontWeight: '900',
     color: COLORS.WarmCharcoal,
   },
-  renameButton: {
-    marginLeft: 8,
-    padding: 4,
-  },
   speciesRow: {
     flexDirection: 'row',
-    marginBottom: 8,
+    gap: 6,
+    marginBottom: 6,
   },
   speciesChip: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: COLORS.ShadowBeige,
     borderRadius: 14,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginHorizontal: 3,
+    paddingHorizontal: 11,
+    paddingVertical: 6,
   },
   selectedSpeciesChip: {
     borderColor: COLORS.RoseCoral,
@@ -391,26 +510,119 @@ const styles = StyleSheet.create({
   },
   selectedSpeciesText: {
     color: COLORS.RoseCoral,
+    fontWeight: '800',
   },
-  statusMood: {
-    fontSize: 13,
+  moodBanner: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 14,
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: COLORS.BorderSubtle,
+  },
+  moodBannerText: {
+    fontSize: 12,
     color: COLORS.WarmCharcoalMuted,
     fontStyle: 'italic',
-    marginTop: 6,
+    textAlign: 'center',
+  },
+  boutiqueCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: COLORS.BorderSubtle,
+    marginBottom: 14,
+  },
+  cardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 10,
+  },
+  cardHeaderTitle: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: COLORS.WarmCharcoal,
+  },
+  accessoryChip: {
+    backgroundColor: COLORS.CozyCream,
+    borderWidth: 1,
+    borderColor: COLORS.ShadowBeige,
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    alignItems: 'center',
+    minWidth: 74,
+  },
+  accessoryChipSelected: {
+    borderColor: COLORS.RoseCoral,
+    backgroundColor: COLORS.SoftRose,
+  },
+  accessoryLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: COLORS.WarmCharcoalMuted,
+    marginTop: 4,
+  },
+  accessoryLabelSelected: {
+    color: COLORS.RoseCoral,
+    fontWeight: '800',
+  },
+  actionsCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: COLORS.BorderSubtle,
+    marginBottom: 14,
+  },
+  actionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: 12,
+  },
+  actionBtn: {
+    width: '31%',
+    backgroundColor: COLORS.CozyCream,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: COLORS.ShadowBeige,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  disabledBtn: {
+    opacity: 0.4,
+  },
+  actionIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  actionBtnLabel: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: COLORS.WarmCharcoal,
+  },
+  actionBtnSub: {
+    fontSize: 10,
+    color: COLORS.WarmCharcoalMuted,
+    marginTop: 2,
   },
   gaugesCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 22,
     padding: 16,
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: COLORS.BorderSubtle,
     marginBottom: 14,
-  },
-  gaugesHeading: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: COLORS.WarmCharcoal,
-    marginBottom: 12,
   },
   gaugeContainer: {
     marginBottom: 10,
@@ -427,10 +639,10 @@ const styles = StyleSheet.create({
   },
   gaugeValue: {
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   gaugeTrack: {
-    height: 7,
+    height: 8,
     backgroundColor: '#EFEAE4',
     borderRadius: 4,
     overflow: 'hidden',
@@ -439,65 +651,15 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 4,
   },
-  actionsCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
-    marginBottom: 14,
-  },
-  actionsHeading: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: COLORS.WarmCharcoal,
-    marginBottom: 12,
-  },
-  actionGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  actionBtn: {
-    width: '31%',
-    backgroundColor: COLORS.CozyCream,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
-    padding: 10,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  disabledBtn: {
-    opacity: 0.4,
-  },
-  actionIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  actionBtnLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: COLORS.WarmCharcoal,
-  },
-  actionBtnSub: {
-    fontSize: 9,
-    color: COLORS.WarmCharcoalMuted,
-    marginTop: 2,
-  },
   historyCard: {
     backgroundColor: COLORS.CozyCream,
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 14,
     borderWidth: 1,
     borderColor: COLORS.ShadowBeige,
   },
   historyHeading: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '800',
     color: COLORS.WarmCharcoal,
     marginBottom: 8,
@@ -510,25 +672,29 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   historyItem: {
-    fontSize: 11,
+    fontSize: 12,
     color: COLORS.WarmCharcoalMuted,
+  },
+  boldText: {
+    fontWeight: '800',
+    color: COLORS.WarmCharcoal,
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(42, 36, 33, 0.55)',
     justifyContent: 'center',
     padding: 24,
   },
   modalCard: {
     backgroundColor: COLORS.CozyCream,
-    borderRadius: 20,
+    borderRadius: 22,
     padding: 22,
     borderWidth: 1,
     borderColor: COLORS.ShadowBeige,
   },
   modalHeading: {
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 17,
+    fontWeight: '900',
     color: COLORS.WarmCharcoal,
     marginBottom: 12,
   },
@@ -553,6 +719,6 @@ const styles = StyleSheet.create({
   modalSubmitText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
   },
 });

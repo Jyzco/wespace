@@ -10,137 +10,136 @@ import Svg, {
   Stop,
 } from 'react-native-svg';
 
-export const FireplaceCanvas: React.FC = () => {
-  const flameAnim1 = useRef(new Animated.Value(0)).current;
-  const flameAnim2 = useRef(new Animated.Value(0)).current;
-  const emberAnim = useRef(new Animated.Value(0)).current;
+interface FireplaceCanvasProps {
+  warmthLevel?: number;
+}
+
+export const FireplaceCanvas: React.FC<FireplaceCanvasProps> = ({
+  warmthLevel = 3,
+}) => {
+  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    // Oscillating flames at ~400ms
     Animated.loop(
       Animated.sequence([
-        Animated.timing(flameAnim1, {
-          toValue: 1,
-          duration: 400,
+        Animated.timing(pulseAnim, {
+          toValue: 1.07,
+          duration: 380,
           useNativeDriver: true,
         }),
-        Animated.timing(flameAnim1, {
-          toValue: 0,
-          duration: 400,
+        Animated.timing(pulseAnim, {
+          toValue: 0.95,
+          duration: 380,
           useNativeDriver: true,
         }),
       ])
     ).start();
+  }, [pulseAnim]);
 
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(flameAnim2, {
-          toValue: 1,
-          duration: 320,
-          useNativeDriver: true,
-        }),
-        Animated.timing(flameAnim2, {
-          toValue: 0,
-          duration: 320,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Floating embers
-    Animated.loop(
-      Animated.timing(emberAnim, {
-        toValue: 1,
-        duration: 2000,
-        useNativeDriver: true,
-      })
-    ).start();
-  }, [flameAnim1, flameAnim2, emberAnim]);
+  const flameScale = 0.85 + warmthLevel * 0.06;
 
   return (
     <View style={styles.container}>
-      <Svg width="260" height="170" viewBox="0 0 260 170">
-        <Defs>
-          {/* Fireplace inner brick shading */}
-          <LinearGradient id="hearthGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor="#1E1612" />
-            <Stop offset="100%" stopColor="#38291F" />
-          </LinearGradient>
-          {/* Outer Flame Gradient */}
-          <LinearGradient id="outerFlameGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor="#FF5722" />
-            <Stop offset="50%" stopColor="#E65100" />
-            <Stop offset="100%" stopColor="#BF360C" />
-          </LinearGradient>
-          {/* Inner Flame Gradient */}
-          <LinearGradient id="innerFlameGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor="#FFF9C4" />
-            <Stop offset="40%" stopColor="#FFD54F" />
-            <Stop offset="100%" stopColor="#FFB300" />
-          </LinearGradient>
-        </Defs>
+      <Animated.View
+        style={{
+          transform: [{ scaleY: pulseAnim }, { scaleX: flameScale }],
+        }}
+      >
+        <Svg width="280" height="175" viewBox="0 0 280 175">
+          <Defs>
+            <LinearGradient id="hearthGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <Stop offset="0%" stopColor="#16100C" />
+              <Stop offset="100%" stopColor="#32231A" />
+            </LinearGradient>
+            <LinearGradient id="outerFlameGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <Stop offset="0%" stopColor="#FF7043" />
+              <Stop offset="50%" stopColor="#E65100" />
+              <Stop offset="100%" stopColor="#BF360C" />
+            </LinearGradient>
+            <LinearGradient id="innerFlameGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <Stop offset="0%" stopColor="#FFFDE7" />
+              <Stop offset="45%" stopColor="#FFD54F" />
+              <Stop offset="100%" stopColor="#FFB300" />
+            </LinearGradient>
+          </Defs>
 
-        {/* Mantel & Backing Wall */}
-        <Rect x="15" y="10" width="230" height="150" rx="12" fill="#423024" />
-        <Rect x="25" y="20" width="210" height="130" rx="8" fill="url(#hearthGrad)" />
+          {/* Hanging Fairy Lights Garland */}
+          <Path
+            d="M 15 16 Q 75 34 140 16 Q 205 34 265 16"
+            stroke="#8D6E63"
+            strokeWidth="1.5"
+            fill="none"
+          />
+          <Circle cx="45" cy="24" r="3.5" fill="#FFF59D" />
+          <Circle cx="95" cy="25" r="3.5" fill="#FFCC80" />
+          <Circle cx="140" cy="17" r="3.5" fill="#FFF59D" />
+          <Circle cx="185" cy="25" r="3.5" fill="#FFCC80" />
+          <Circle cx="235" cy="24" r="3.5" fill="#FFF59D" />
 
-        {/* Brick Patterns */}
-        <G stroke="#2B1F17" strokeWidth="1.5" opacity={0.6}>
-          {/* Horizontal lines */}
-          <Path d="M 25 45 L 235 45 M 25 70 L 235 70 M 25 95 L 235 95 M 25 120 L 235 120" />
-          {/* Vertical brick lines */}
-          <Path d="M 60 20 L 60 45 M 120 20 L 120 45 M 180 20 L 180 45" />
-          <Path d="M 90 45 L 90 70 M 150 45 L 150 70 M 210 45 L 210 70" />
-          <Path d="M 60 70 L 60 95 M 120 70 L 120 95 M 180 70 L 180 95" />
-          <Path d="M 90 95 L 90 120 M 150 95 L 150 120 M 210 95 L 210 120" />
-        </G>
+          {/* Wooden Mantelpiece Shelf */}
+          <Rect x="10" y="10" width="260" height="12" rx="5" fill="#6D4C41" />
+          <Rect x="22" y="22" width="236" height="142" rx="10" fill="#4E342E" />
+          <Rect x="34" y="32" width="212" height="124" rx="8" fill="url(#hearthGrad)" />
 
-        {/* Arch Rim */}
-        <Path
-          d="M 45 145 L 45 70 C 45 35 215 35 215 70 L 215 145"
-          fill="none"
-          stroke="#5C4033"
-          strokeWidth="6"
-        />
+          {/* Brick Masonry Lines */}
+          <G stroke="#271B14" strokeWidth="1.5" opacity={0.65}>
+            <Path d="M 34 55 L 246 55 M 34 80 L 246 80 M 34 105 L 246 105 M 34 130 L 246 130" />
+            <Path d="M 75 32 L 75 55 M 140 32 L 140 55 M 205 32 L 205 55" />
+            <Path d="M 105 55 L 105 80 M 175 55 L 175 80" />
+            <Path d="M 75 80 L 75 105 M 140 80 L 140 105 M 205 80 L 205 105" />
+          </G>
 
-        {/* Firewood Logs */}
-        <G id="logs">
-          <Path d="M 60 138 L 190 125 L 200 135 L 70 148 Z" fill="#5D4037" stroke="#3E2723" strokeWidth="2" />
-          <Path d="M 70 125 L 195 138 L 185 148 L 60 135 Z" fill="#4E342E" stroke="#271202" strokeWidth="2" />
-          <Circle cx="65" cy="132" r="7" fill="#795548" />
-          <Circle cx="195" cy="132" r="7" fill="#795548" />
-        </G>
+          {/* Ambient Hearth Glow Halo */}
+          <Circle cx="140" cy="118" r="56" fill="#FF8F00" opacity={0.22} />
+          <Circle cx="140" cy="122" r="36" fill="#FFB300" opacity={0.3} />
 
-        {/* Glow Halo */}
-        <Circle cx="130" cy="115" r="48" fill="#FF8F00" opacity={0.25} />
+          {/* Crossed Birch Logs */}
+          <G id="logs">
+            <Path
+              d="M 70 144 L 204 130 L 212 141 L 78 154 Z"
+              fill="#5D4037"
+              stroke="#3E2723"
+              strokeWidth="2"
+            />
+            <Path
+              d="M 78 130 L 210 144 L 202 154 L 70 141 Z"
+              fill="#4E342E"
+              stroke="#271202"
+              strokeWidth="2"
+            />
+            <Circle cx="74" cy="137" r="7" fill="#8D6E63" />
+            <Circle cx="206" cy="137" r="7" fill="#8D6E63" />
+          </G>
 
-        {/* Outer Flame (Dual-layer quadratic curves) */}
-        <Path
-          d="M 85 136 
-             Q 90 100 105 85 
-             Q 115 105 130 65 
-             Q 145 100 155 88 
-             Q 175 110 175 136 
-             Q 130 148 85 136 Z"
-          fill="url(#outerFlameGrad)"
-        />
+          {/* Outer Flame (Dual-layer quadratic curve) */}
+          <Path
+            d="M 92 142 
+               Q 96 100 112 82 
+               Q 125 106 140 56 
+               Q 155 100 168 84 
+               Q 186 108 188 142 
+               Q 140 154 92 142 Z"
+            fill="url(#outerFlameGrad)"
+          />
 
-        {/* Inner Bright Amber Core */}
-        <Path
-          d="M 102 135 
-             Q 110 110 122 92 
-             Q 130 105 138 88 
-             Q 150 110 158 135 
-             Q 130 144 102 135 Z"
-          fill="url(#innerFlameGrad)"
-        />
+          {/* Inner Bright Amber Flame */}
+          <Path
+            d="M 110 140 
+               Q 118 112 130 90 
+               Q 140 104 148 86 
+               Q 162 110 170 140 
+               Q 140 150 110 140 Z"
+            fill="url(#innerFlameGrad)"
+          />
 
-        {/* Little Floating Embers */}
-        <Circle cx="120" cy="72" r="2.5" fill="#FFE082" opacity={0.8} />
-        <Circle cx="142" cy="62" r="1.8" fill="#FFCA28" opacity={0.7} />
-        <Circle cx="110" cy="55" r="1.5" fill="#FFA726" opacity={0.9} />
-        <Circle cx="135" cy="46" r="2" fill="#FFE082" opacity={0.6} />
-      </Svg>
+          {/* Glowing Sparks & Embers */}
+          <Circle cx="128" cy="70" r="2.8" fill="#FFE082" opacity={0.9} />
+          <Circle cx="154" cy="60" r="2.2" fill="#FFCA28" opacity={0.85} />
+          <Circle cx="116" cy="52" r="1.8" fill="#FFA726" opacity={0.9} />
+          <Circle cx="145" cy="44" r="2.4" fill="#FFF59D" opacity={0.75} />
+          <Circle cx="166" cy="76" r="2" fill="#FFCC80" opacity={0.8} />
+        </Svg>
+      </Animated.View>
     </View>
   );
 };
@@ -149,6 +148,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 8,
+    marginVertical: 4,
   },
 });

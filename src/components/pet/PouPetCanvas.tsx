@@ -1,49 +1,64 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Animated, Text } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Animated,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import Svg, {
   Path,
   Circle,
   Ellipse,
   G,
   Line,
+  Rect,
+  Defs,
+  LinearGradient,
+  Stop,
+  Polygon,
 } from 'react-native-svg';
-import { PetState, PetType } from '../../types';
+import { PetState, PetType, PetAccessory } from '../../types';
 import { COLORS } from '../../constants/theme';
 
 interface PouPetCanvasProps {
   pet: PetState;
   activeParticle?: string | null;
+  onPetTap?: () => void;
 }
 
-export const PouPetCanvas: React.FC<PouPetCanvasProps> = ({ pet, activeParticle }) => {
+export const PouPetCanvas: React.FC<PouPetCanvasProps> = ({
+  pet,
+  activeParticle,
+  onPetTap,
+}) => {
   const [isBlinking, setIsBlinking] = useState(false);
   const bounceAnim = useRef(new Animated.Value(0)).current;
+  const squishAnim = useRef(new Animated.Value(1)).current;
   const particleAnim = useRef(new Animated.Value(0)).current;
 
-  // Blinking loop every ~3.5s
+  // Dynamic blinking loop every ~3.5s
   useEffect(() => {
     if (pet.isSleeping) return;
-
     const interval = setInterval(() => {
       setIsBlinking(true);
-      setTimeout(() => setIsBlinking(false), 160);
+      setTimeout(() => setIsBlinking(false), 150);
     }, 3500);
-
     return () => clearInterval(interval);
   }, [pet.isSleeping]);
 
-  // Gentle breathing / idle bounce animation
+  // Gentle breathing / idle float animation
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(bounceAnim, {
-          toValue: -6,
-          duration: 1400,
+          toValue: -7,
+          duration: 1300,
           useNativeDriver: true,
         }),
         Animated.timing(bounceAnim, {
           toValue: 0,
-          duration: 1400,
+          duration: 1300,
           useNativeDriver: true,
         }),
       ])
@@ -54,196 +69,504 @@ export const PouPetCanvas: React.FC<PouPetCanvasProps> = ({ pet, activeParticle 
   useEffect(() => {
     if (activeParticle) {
       particleAnim.setValue(0);
-      Animated.timing(particleAnim, {
-        toValue: 1,
-        duration: 900,
-        useNativeDriver: true,
-      }).start();
+      Animated.parallel([
+        Animated.timing(particleAnim, {
+          toValue: 1,
+          duration: 950,
+          useNativeDriver: true,
+        }),
+        Animated.sequence([
+          Animated.timing(squishAnim, {
+            toValue: 1.09,
+            duration: 160,
+            useNativeDriver: true,
+          }),
+          Animated.timing(squishAnim, {
+            toValue: 0.94,
+            duration: 140,
+            useNativeDriver: true,
+          }),
+          Animated.timing(squishAnim, {
+            toValue: 1,
+            duration: 180,
+            useNativeDriver: true,
+          }),
+        ]),
+      ]).start();
     }
-  }, [activeParticle, particleAnim]);
+  }, [activeParticle, particleAnim, squishAnim]);
 
-  // Expressions logic based on blueprint
+  const handlePressPet = () => {
+    Animated.sequence([
+      Animated.timing(squishAnim, {
+        toValue: 1.12,
+        duration: 130,
+        useNativeDriver: true,
+      }),
+      Animated.timing(squishAnim, {
+        toValue: 0.92,
+        duration: 130,
+        useNativeDriver: true,
+      }),
+      Animated.timing(squishAnim, {
+        toValue: 1,
+        duration: 160,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    if (onPetTap) onPetTap();
+  };
+
   const isSad = pet.health < 35 || pet.happiness < 35;
   const isHappy = pet.happiness > 70 && !isSad;
 
-  // Potato body color (warm caramel mocha)
-  const bodyColor = pet.isSleeping ? '#D8C6B6' : '#C49A6C';
-  const bellyColor = pet.isSleeping ? '#E8DDD2' : '#DEC19C';
-
-  // Render Ears / Head features by species
   const renderSpeciesFeatures = (type: PetType) => {
     switch (type) {
       case 'CAT':
         return (
-          <G id="cat-ears">
-            {/* Left ear */}
-            <Path d="M 45 65 L 25 25 L 68 45 Z" fill="#A8794E" />
-            <Path d="M 45 60 L 32 32 L 62 47 Z" fill="#F8B4C0" />
-            {/* Right ear */}
-            <Path d="M 135 65 L 155 25 L 112 45 Z" fill="#A8794E" />
-            <Path d="M 135 60 L 148 32 L 118 47 Z" fill="#F8B4C0" />
-            {/* Whiskers */}
-            <Line x1="30" y1="108" x2="65" y2="108" stroke="#5D3A1A" strokeWidth="2" />
-            <Line x1="32" y1="115" x2="65" y2="112" stroke="#5D3A1A" strokeWidth="2" />
-            <Line x1="30" y1="122" x2="65" y2="116" stroke="#5D3A1A" strokeWidth="2" />
-            <Line x1="170" y1="108" x2="135" y2="108" stroke="#5D3A1A" strokeWidth="2" />
-            <Line x1="168" y1="115" x2="135" y2="112" stroke="#5D3A1A" strokeWidth="2" />
-            <Line x1="170" y1="122" x2="135" y2="116" stroke="#5D3A1A" strokeWidth="2" />
-            {/* Nose */}
-            <Path d="M 95 106 L 105 106 L 100 112 Z" fill="#EE5D6C" />
+          <G id="cat-features">
+            {/* Pointed ears */}
+            <Path d="M 68 78 L 46 34 L 92 58 Z" fill="#A67649" stroke="#6E4726" strokeWidth="2.5" />
+            <Path d="M 69 72 L 54 42 L 85 59 Z" fill="#F9B4C2" />
+            <Path d="M 172 78 L 194 34 L 148 58 Z" fill="#A67649" stroke="#6E4726" strokeWidth="2.5" />
+            <Path d="M 171 72 L 186 42 L 155 59 Z" fill="#F9B4C2" />
           </G>
         );
-
       case 'DOG':
         return (
-          <G id="dog-ears">
-            {/* Left flappy ear */}
-            <Ellipse cx="38" cy="85" rx="14" ry="32" fill="#8B5A2B" transform="rotate(-15 38 85)" />
-            {/* Right flappy ear */}
-            <Ellipse cx="162" cy="85" rx="14" ry="32" fill="#8B5A2B" transform="rotate(15 162 85)" />
-            {/* Dark snout oval */}
-            <Ellipse cx="100" cy="110" rx="9" ry="6" fill="#2A2421" />
+          <G id="dog-features">
+            {/* Flappy rounded ears */}
+            <Ellipse
+              cx="56"
+              cy="102"
+              rx="16"
+              ry="35"
+              fill="#7E5129"
+              stroke="#5A381B"
+              strokeWidth="2.5"
+              transform="rotate(-18 56 102)"
+            />
+            <Ellipse
+              cx="184"
+              cy="102"
+              rx="16"
+              ry="35"
+              fill="#7E5129"
+              stroke="#5A381B"
+              strokeWidth="2.5"
+              transform="rotate(18 184 102)"
+            />
           </G>
         );
-
       case 'BIRD':
         return (
-          <G id="bird-tuft-and-beak">
-            {/* Golden top tuft */}
-            <Path d="M 95 38 C 90 18 100 14 100 12 C 102 18 112 18 105 38 Z" fill="#F4B942" />
-            {/* Mini wings */}
-            <Ellipse cx="38" cy="120" rx="10" ry="18" fill="#B38656" transform="rotate(-20 38 120)" />
-            <Ellipse cx="162" cy="120" rx="10" ry="18" fill="#B38656" transform="rotate(20 162 120)" />
-            {/* Triangular orange beak */}
-            <Path d="M 93 105 L 107 105 L 100 116 Z" fill="#FF8C00" />
+          <G id="bird-features">
+            {/* Golden tuft */}
+            <Path
+              d="M 114 50 C 106 24 120 18 120 14 C 125 22 136 22 126 50 Z"
+              fill="#F4B942"
+              stroke="#B47B15"
+              strokeWidth="2"
+            />
+            {/* Side mini wings */}
+            <Ellipse
+              cx="54"
+              cy="134"
+              rx="12"
+              ry="22"
+              fill="#B38354"
+              stroke="#7A5430"
+              strokeWidth="2.5"
+              transform="rotate(-22 54 134)"
+            />
+            <Ellipse
+              cx="186"
+              cy="134"
+              rx="12"
+              ry="22"
+              fill="#B38354"
+              stroke="#7A5430"
+              strokeWidth="2.5"
+              transform="rotate(22 186 134)"
+            />
           </G>
         );
-
       case 'BUNNY':
         return (
-          <G id="bunny-ears">
-            {/* Tall vertical rounded ears */}
-            <Ellipse cx="68" cy="28" rx="12" ry="26" fill="#C49A6C" />
-            <Ellipse cx="68" cy="28" rx="7" ry="20" fill="#F8B4C0" />
-            <Ellipse cx="132" cy="28" rx="12" ry="26" fill="#C49A6C" />
-            <Ellipse cx="132" cy="28" rx="7" ry="20" fill="#F8B4C0" />
-            {/* Soft pink nose circle */}
-            <Circle cx="100" cy="108" r="4.5" fill="#EE5D6C" />
+          <G id="bunny-features">
+            {/* Tall vertical bunny ears */}
+            <Ellipse
+              cx="88"
+              cy="38"
+              rx="13"
+              ry="32"
+              fill="#C99E70"
+              stroke="#7A5430"
+              strokeWidth="2.5"
+              transform="rotate(-6 88 38)"
+            />
+            <Ellipse
+              cx="88"
+              cy="39"
+              rx="7.5"
+              ry="23"
+              fill="#F9B4C2"
+              transform="rotate(-6 88 39)"
+            />
+            <Ellipse
+              cx="152"
+              cy="38"
+              rx="13"
+              ry="32"
+              fill="#C99E70"
+              stroke="#7A5430"
+              strokeWidth="2.5"
+              transform="rotate(6 152 38)"
+            />
+            <Ellipse
+              cx="152"
+              cy="39"
+              rx="7.5"
+              ry="23"
+              fill="#F9B4C2"
+              transform="rotate(6 152 39)"
+            />
           </G>
         );
     }
   };
 
+  const renderSpeciesNoseAndWhiskers = (type: PetType) => {
+    switch (type) {
+      case 'CAT':
+        return (
+          <G>
+            <Line x1="48" y1="122" x2="82" y2="123" stroke="#5A381B" strokeWidth="2.2" strokeLinecap="round" />
+            <Line x1="46" y1="130" x2="81" y2="128" stroke="#5A381B" strokeWidth="2.2" strokeLinecap="round" />
+            <Line x1="50" y1="138" x2="82" y2="133" stroke="#5A381B" strokeWidth="2.2" strokeLinecap="round" />
+            <Line x1="192" y1="122" x2="158" y2="123" stroke="#5A381B" strokeWidth="2.2" strokeLinecap="round" />
+            <Line x1="194" y1="130" x2="159" y2="128" stroke="#5A381B" strokeWidth="2.2" strokeLinecap="round" />
+            <Line x1="190" y1="138" x2="158" y2="133" stroke="#5A381B" strokeWidth="2.2" strokeLinecap="round" />
+            <Path d="M 114 120 L 126 120 L 120 127 Z" fill="#EE5D6C" />
+          </G>
+        );
+      case 'DOG':
+        return (
+          <G>
+            <Ellipse cx="120" cy="124" rx="13" ry="9" fill="#EAD6C0" />
+            <Ellipse cx="120" cy="121" rx="8" ry="5.5" fill="#2A2421" />
+            <Circle cx="118" cy="119.5" r="1.8" fill="#FFFFFF" />
+          </G>
+        );
+      case 'BIRD':
+        return (
+          <Path
+            d="M 112 118 L 128 118 L 120 130 Z"
+            fill="#FF8C00"
+            stroke="#C25E00"
+            strokeWidth="1.5"
+          />
+        );
+      case 'BUNNY':
+        return (
+          <G>
+            <Ellipse cx="120" cy="122" rx="5.5" ry="4" fill="#EE5D6C" />
+            <Line x1="60" y1="124" x2="84" y2="125" stroke="#6E4726" strokeWidth="1.8" strokeLinecap="round" />
+            <Line x1="180" y1="124" x2="156" y2="125" stroke="#6E4726" strokeWidth="1.8" strokeLinecap="round" />
+          </G>
+        );
+    }
+  };
+
+  const renderAccessory = (acc: PetAccessory) => {
+    switch (acc) {
+      case 'CROWN':
+        return (
+          <G id="acc-crown">
+            <Polygon
+              points="98,55 103,34 112,45 120,30 128,45 137,34 142,55"
+              fill="#FFD54F"
+              stroke="#B47B15"
+              strokeWidth="2"
+            />
+            <Circle cx="120" cy="46" r="3" fill="#EE5D6C" />
+            <Circle cx="108" cy="49" r="2" fill="#5EB1EF" />
+            <Circle cx="132" cy="49" r="2" fill="#5EB1EF" />
+          </G>
+        );
+      case 'BOW':
+        return (
+          <G id="acc-bow">
+            <Path
+              d="M 120 54 C 102 38 96 64 120 56 C 144 64 138 38 120 54 Z"
+              fill="#EE5D6C"
+              stroke="#B83242"
+              strokeWidth="2"
+            />
+            <Circle cx="120" cy="54" r="5" fill="#FF8DA1" stroke="#B83242" strokeWidth="1.5" />
+          </G>
+        );
+      case 'GLASSES':
+        return (
+          <G id="acc-glasses">
+            <Rect x="78" y="96" width="34" height="20" rx="6" fill="#1E293B" stroke="#F4B942" strokeWidth="2.5" />
+            <Rect x="128" y="96" width="34" height="20" rx="6" fill="#1E293B" stroke="#F4B942" strokeWidth="2.5" />
+            <Line x1="112" y1="104" x2="128" y2="104" stroke="#F4B942" strokeWidth="2.5" />
+            <Line x1="84" y1="101" x2="92" y2="111" stroke="#FFFFFF" strokeWidth="2" opacity={0.6} />
+            <Line x1="134" y1="101" x2="142" y2="111" stroke="#FFFFFF" strokeWidth="2" opacity={0.6} />
+          </G>
+        );
+      case 'FLOWER':
+        return (
+          <G id="acc-flower" transform="translate(142, 46)">
+            <Circle cx="0" cy="-7" r="6" fill="#FF8DA1" />
+            <Circle cx="7" cy="0" r="6" fill="#FF8DA1" />
+            <Circle cx="0" cy="7" r="6" fill="#FF8DA1" />
+            <Circle cx="-7" cy="0" r="6" fill="#FF8DA1" />
+            <Circle cx="0" cy="0" r="5" fill="#FFD54F" />
+          </G>
+        );
+      case 'SCARF':
+        return (
+          <G id="acc-scarf">
+            <Path
+              d="M 72 152 Q 120 168 168 152 Q 172 165 164 168 Q 120 182 76 168 Q 68 165 72 152 Z"
+              fill="#EE5D6C"
+              stroke="#B83242"
+              strokeWidth="2"
+            />
+            <Path
+              d="M 140 162 L 154 190 L 136 192 L 130 165 Z"
+              fill="#D14353"
+              stroke="#B83242"
+              strokeWidth="1.8"
+            />
+          </G>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={handlePressPet}
+      style={styles.container}
+    >
       <Animated.View
         style={[
           styles.animatedWrapper,
           {
-            transform: [{ translateY: bounceAnim }],
+            transform: [
+              { translateY: bounceAnim },
+              { scaleX: squishAnim },
+              {
+                scaleY: squishAnim.interpolate({
+                  inputRange: [0.9, 1, 1.15],
+                  outputRange: [1.08, 1, 0.9],
+                }),
+              },
+            ],
           },
         ]}
       >
-        <Svg width="200" height="190" viewBox="0 0 200 190">
-          {/* Species specific back layer (ears, tufts) */}
+        <Svg width="240" height="215" viewBox="0 0 240 215">
+          <Defs>
+            <LinearGradient id="petBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <Stop
+                offset="0%"
+                stopColor={pet.isSleeping ? '#D8C3B0' : '#D9AE82'}
+              />
+              <Stop
+                offset="100%"
+                stopColor={pet.isSleeping ? '#B59B84' : '#B58150'}
+              />
+            </LinearGradient>
+            <LinearGradient id="rugGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <Stop offset="0%" stopColor="#FFE4E6" />
+              <Stop offset="50%" stopColor="#FECDD3" />
+              <Stop offset="100%" stopColor="#FFE4E6" />
+            </LinearGradient>
+          </Defs>
+
+          {/* Cozy Nursery Floor Rug */}
+          <Ellipse
+            cx="120"
+            cy="192"
+            rx="84"
+            ry="16"
+            fill="url(#rugGrad)"
+            stroke="#FDA4AF"
+            strokeWidth="2"
+          />
+          <Ellipse cx="120" cy="190" rx="60" ry="9" fill="#FFF1F2" opacity={0.7} />
+
+          {/* Back Species Features */}
           {renderSpeciesFeatures(pet.petType)}
 
-          {/* Distinctive Pou-like potato-bean body shape (narrower top, flared round bottom) */}
+          {/* Pou Potato-Bean Body (Cubic Beziers) */}
           <Path
-            d="M 100 42 
-               C 135 42, 150 70, 160 100 
-               C 172 135, 165 170, 100 170 
-               C 35 170, 28 135, 40 100 
-               C 50 70, 65 42, 100 42 Z"
-            fill={bodyColor}
-            stroke="#8C6642"
+            d="M 120 52 
+               C 158 52, 174 82, 184 116 
+               C 196 154, 188 190, 120 190 
+               C 52 190, 44 154, 56 116 
+               C 66 82, 82 52, 120 52 Z"
+            fill="url(#petBodyGrad)"
+            stroke="#6E4726"
             strokeWidth="3.5"
           />
 
-          {/* Soft lighter belly patch */}
-          <Ellipse cx="100" cy="125" rx="42" ry="32" fill={bellyColor} opacity={0.65} />
+          {/* Soft Cream Belly Patch */}
+          <Ellipse
+            cx="120"
+            cy="144"
+            rx="46"
+            ry="34"
+            fill={pet.isSleeping ? '#EFE6DD' : '#F4DFC8'}
+            opacity={0.78}
+          />
 
-          {/* Cheek blush */}
+          {/* Rosy Cheeks */}
           {!pet.isSleeping && (
-            <G id="blush">
-              <Circle cx="62" cy="115" r="7.5" fill="#F8B4C0" opacity={0.6} />
-              <Circle cx="138" cy="115" r="7.5" fill="#F8B4C0" opacity={0.6} />
+            <G>
+              <Ellipse cx="78" cy="126" rx="10" ry="6.5" fill="#F472B6" opacity={0.55} />
+              <Ellipse cx="162" cy="126" rx="10" ry="6.5" fill="#F472B6" opacity={0.55} />
             </G>
           )}
 
-          {/* Eyes rendering */}
+          {/* Eyes */}
           {pet.isSleeping ? (
-            // Sleeping eyes: curved arcs
-            <G id="sleeping-eyes">
-              <Path d="M 68 94 Q 78 104 88 94" stroke="#2A2421" strokeWidth="3" fill="none" strokeLinecap="round" />
-              <Path d="M 112 94 Q 122 104 132 94" stroke="#2A2421" strokeWidth="3" fill="none" strokeLinecap="round" />
+            <G>
+              <Path
+                d="M 84 106 Q 95 116 106 106"
+                stroke="#2A2421"
+                strokeWidth="3.2"
+                fill="none"
+                strokeLinecap="round"
+              />
+              <Path
+                d="M 134 106 Q 145 116 156 106"
+                stroke="#2A2421"
+                strokeWidth="3.2"
+                fill="none"
+                strokeLinecap="round"
+              />
             </G>
           ) : isBlinking ? (
-            // Blinking eyes: flat slit
-            <G id="blinking-eyes">
-              <Line x1="68" y1="94" x2="88" y2="94" stroke="#2A2421" strokeWidth="3.5" strokeLinecap="round" />
-              <Line x1="112" y1="94" x2="132" y2="94" stroke="#2A2421" strokeWidth="3.5" strokeLinecap="round" />
+            <G>
+              <Line
+                x1="84"
+                y1="106"
+                x2="106"
+                y2="106"
+                stroke="#2A2421"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+              />
+              <Line
+                x1="134"
+                y1="106"
+                x2="156"
+                y2="106"
+                stroke="#2A2421"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+              />
             </G>
           ) : isSad ? (
-            // Sad drooped eyes
-            <G id="sad-eyes">
-              <Circle cx="78" cy="94" r="8" fill="#2A2421" />
-              <Circle cx="122" cy="94" r="8" fill="#2A2421" />
-              <Path d="M 66 84 L 88 88" stroke="#5D3A1A" strokeWidth="2.5" strokeLinecap="round" />
-              <Path d="M 134 84 L 112 88" stroke="#5D3A1A" strokeWidth="2.5" strokeLinecap="round" />
+            <G>
+              <Circle cx="95" cy="107" r="9.5" fill="#2A2421" />
+              <Circle cx="145" cy="107" r="9.5" fill="#2A2421" />
+              <Circle cx="92" cy="104" r="2.8" fill="#FFFFFF" />
+              <Circle cx="142" cy="104" r="2.8" fill="#FFFFFF" />
+              <Path d="M 82 95 L 106 99" stroke="#5A381B" strokeWidth="2.8" strokeLinecap="round" />
+              <Path d="M 158 95 L 134 99" stroke="#5A381B" strokeWidth="2.8" strokeLinecap="round" />
             </G>
           ) : (
-            // Open, lively eyes
-            <G id="happy-eyes">
-              <Circle cx="78" cy="92" r="10.5" fill="#2A2421" />
-              <Circle cx="122" cy="92" r="10.5" fill="#2A2421" />
-              {/* Specular glints */}
-              <Circle cx="81" cy="89" r="3.5" fill="#FFFFFF" />
-              <Circle cx="125" cy="89" r="3.5" fill="#FFFFFF" />
+            <G>
+              <Circle cx="95" cy="105" r="11.5" fill="#2A2421" />
+              <Circle cx="145" cy="105" r="11.5" fill="#2A2421" />
+              <Circle cx="98.5" cy="101" r="4" fill="#FFFFFF" />
+              <Circle cx="148.5" cy="101" r="4" fill="#FFFFFF" />
               {isHappy && (
                 <>
-                  <Circle cx="76" cy="95" r="1.8" fill="#FFFFFF" />
-                  <Circle cx="120" cy="95" r="1.8" fill="#FFFFFF" />
+                  <Circle cx="91.5" cy="109" r="2" fill="#FFFFFF" />
+                  <Circle cx="141.5" cy="109" r="2" fill="#FFFFFF" />
                 </>
               )}
             </G>
           )}
 
-          {/* Mouth rendering */}
+          {/* Nose & Whiskers */}
+          {renderSpeciesNoseAndWhiskers(pet.petType)}
+
+          {/* Mouth */}
           {pet.isSleeping ? (
-            <Path d="M 94 122 Q 100 126 106 122" stroke="#4A3B32" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+            <Path
+              d="M 113 135 Q 120 139 127 135"
+              stroke="#4A3B32"
+              strokeWidth="2.5"
+              fill="none"
+              strokeLinecap="round"
+            />
           ) : isSad ? (
-            // Downturned sad mouth
-            <Path d="M 92 128 Q 100 120 108 128" stroke="#4A3B32" strokeWidth="3" fill="none" strokeLinecap="round" />
+            <Path
+              d="M 110 142 Q 120 132 130 142"
+              stroke="#4A3B32"
+              strokeWidth="3"
+              fill="none"
+              strokeLinecap="round"
+            />
           ) : isHappy ? (
-            // Wide happy smile
-            <Path d="M 88 120 Q 100 134 112 120" stroke="#4A3B32" strokeWidth="3" fill="#EE5D6C" strokeLinecap="round" />
+            <Path
+              d="M 106 132 Q 120 148 134 132 Z"
+              stroke="#4A3B32"
+              strokeWidth="2.8"
+              fill="#EE5D6C"
+              strokeLinecap="round"
+            />
           ) : (
-            // Calm neutral gentle smile
-            <Path d="M 92 122 Q 100 128 108 122" stroke="#4A3B32" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            <Path
+              d="M 110 134 Q 120 141 130 134"
+              stroke="#4A3B32"
+              strokeWidth="2.8"
+              fill="none"
+              strokeLinecap="round"
+            />
           )}
 
-          {/* Dirt / Mud Splotches when cleanliness < 75 */}
+          {/* Dirt Splotches when cleanliness < 75 */}
           {pet.cleanliness < 75 && (
-            <G id="dirt-splotches">
-              <Path d="M 64 142 C 60 139 52 144 56 148 C 60 152 70 148 64 142 Z" fill="#6B4E31" opacity={0.8} />
-              <Circle cx="50" cy="135" r="3" fill="#6B4E31" opacity={0.7} />
-              <Path d="M 136 138 C 142 135 148 141 144 146 C 140 150 132 144 136 138 Z" fill="#6B4E31" opacity={0.8} />
+            <G>
+              <Path
+                d="M 78 158 C 72 154 64 160 69 165 C 74 170 84 165 78 158 Z"
+                fill="#6B4E31"
+                opacity={0.82}
+              />
+              <Circle cx="65" cy="150" r="3.5" fill="#6B4E31" opacity={0.75} />
+              <Path
+                d="M 158 154 C 165 150 172 157 167 162 C 162 167 153 160 158 154 Z"
+                fill="#6B4E31"
+                opacity={0.82}
+              />
             </G>
           )}
 
-          {/* Extra dirt when cleanliness < 45 */}
           {pet.cleanliness < 45 && (
-            <G id="extra-dirt">
-              <Circle cx="84" cy="62" r="4" fill="#5A3E24" opacity={0.8} />
-              <Circle cx="120" cy="66" r="3.5" fill="#5A3E24" opacity={0.8} />
-              <Path d="M 96 148 C 92 144 108 142 104 150 Z" fill="#5A3E24" opacity={0.8} />
+            <G>
+              <Circle cx="102" cy="74" r="4.5" fill="#5A3E24" opacity={0.82} />
+              <Circle cx="142" cy="78" r="4" fill="#5A3E24" opacity={0.82} />
+              <Path d="M 114 166 C 110 161 128 159 124 168 Z" fill="#5A3E24" opacity={0.85} />
             </G>
           )}
+
+          {/* Wearable Accessory */}
+          {renderAccessory(pet.accessory || 'NONE')}
         </Svg>
       </Animated.View>
 
-      {/* Floating Emoji Particles */}
+      {/* Floating Emoji Particle */}
       {activeParticle && (
         <Animated.View
           pointerEvents="none"
@@ -258,13 +581,13 @@ export const PouPetCanvas: React.FC<PouPetCanvasProps> = ({ pet, activeParticle 
                 {
                   translateY: particleAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [20, -70],
+                    outputRange: [15, -75],
                   }),
                 },
                 {
                   scale: particleAnim.interpolate({
                     inputRange: [0, 0.5, 1],
-                    outputRange: [0.6, 1.4, 1.1],
+                    outputRange: [0.6, 1.45, 1.15],
                   }),
                 },
               ],
@@ -274,7 +597,9 @@ export const PouPetCanvas: React.FC<PouPetCanvasProps> = ({ pet, activeParticle 
           <Text style={styles.particleText}>{activeParticle}</Text>
         </Animated.View>
       )}
-    </View>
+
+      <Text style={styles.tapHint}>Tap {pet.petName} for belly rubs 💕</Text>
+    </TouchableOpacity>
   );
 };
 
@@ -282,7 +607,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 195,
     marginVertical: 4,
   },
   animatedWrapper: {
@@ -291,9 +615,15 @@ const styles = StyleSheet.create({
   },
   particle: {
     position: 'absolute',
-    top: 50,
+    top: 40,
   },
   particleText: {
-    fontSize: 40,
+    fontSize: 42,
+  },
+  tapHint: {
+    fontSize: 11,
+    color: COLORS.WarmCharcoalLight,
+    fontWeight: '600',
+    marginTop: -4,
   },
 });

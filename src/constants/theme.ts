@@ -1,26 +1,92 @@
+import {
+  CoupleState,
+  PetState,
+  Memory,
+  SnapPhoto,
+  Expense,
+  SavingGoal,
+  DailyQuestion,
+  LoveLetter,
+  LoveCoupon,
+  BucketItem,
+  PartnerMood,
+} from '../types';
+
 export const COLORS = {
   CozyCream: '#FFFAF3',
   WarmCharcoal: '#2A2421',
-  WarmCharcoalMuted: '#685D57',
+  WarmCharcoalMuted: '#6E625B',
+  WarmCharcoalLight: '#9C8E85',
   RoseCoral: '#EE5D6C',
-  RoseCoralHover: '#D94958',
-  SoftRose: '#FFEcef',
+  RoseCoralDark: '#D14353',
+  RoseCoralSoft: '#FFF0F2',
+  SoftRose: '#FFECEF',
   HoneyYellow: '#F4B942',
+  HoneyYellowSoft: '#FFF9E6',
   SoftLavender: '#9D74E7',
+  SoftLavenderSoft: '#F4EEFF',
   PastelBlue: '#5EB1EF',
+  PastelBlueSoft: '#EDF7FF',
+  SageGreen: '#2A9D8F',
+  SageGreenSoft: '#E9F7F5',
   ShadowBeige: '#EADDD0',
+  BorderSubtle: '#F0E6DC',
   SurfaceCard: '#FFFFFF',
   SurfaceSubtle: '#FBF8F4',
   WhatsAppTeal: '#075E54',
   WhatsAppGreen: '#25D366',
   GradientStart: '#FCFAF7',
   GradientEnd: '#F7F3EE',
+  HearthDark: '#1F1612',
+  HearthWarm: '#2E2019',
   White: '#FFFFFF',
   Danger: '#EF4444',
   Success: '#10B981',
 };
 
-export const INITIAL_COUPLE: import('../types').CoupleState = {
+export const MOOD_META: Record<
+  PartnerMood,
+  { emoji: string; label: string; color: string; bg: string }
+> = {
+  AFFECTIONATE: {
+    emoji: '🥰',
+    label: 'Feeling Loving',
+    color: '#E11D48',
+    bg: '#FFE4E6',
+  },
+  COZY: {
+    emoji: '🧸',
+    label: 'Cozy & Relaxed',
+    color: '#B45309',
+    bg: '#FEF3C7',
+  },
+  COFFEE: {
+    emoji: '☕',
+    label: 'Caffeine Mode',
+    color: '#78350F',
+    bg: '#FDE68A',
+  },
+  DEEP_WORK: {
+    emoji: '💻',
+    label: 'Deep Focus',
+    color: '#0369A1',
+    bg: '#E0F2FE',
+  },
+  MISSING_YOU: {
+    emoji: '🌙',
+    label: 'Missing You',
+    color: '#6D28D9',
+    bg: '#EDE9FE',
+  },
+  SLEEPY: {
+    emoji: '😴',
+    label: 'Sleepy Loaf',
+    color: '#475569',
+    bg: '#F1F5F9',
+  },
+};
+
+export const INITIAL_COUPLE: CoupleState = {
   coupleId: 'ROOM_882910',
   isPaired: true,
   partner1Name: 'Leo',
@@ -28,17 +94,27 @@ export const INITIAL_COUPLE: import('../types').CoupleState = {
   pairingCode: '882910',
   activeUser: 'Leo',
   daysTogether: 124,
+  anniversaryDate: '2026-06-26',
+  partner1Mood: 'AFFECTIONATE',
+  partner2Mood: 'MISSING_YOU',
+  partner1Status: 'Listening to jazz & thinking of our next café date',
+  partner2Status: 'Counting down the hours until our evening call 💕',
+  partner1Battery: 88,
+  partner2Battery: 94,
 };
 
-export const INITIAL_PET: import('../types').PetState = {
+export const INITIAL_PET: PetState = {
   coupleId: 'ROOM_882910',
   petName: 'Mocha',
   petType: 'CAT',
-  hunger: 80,
-  happiness: 85,
-  energy: 70,
-  cleanliness: 90,
-  health: 95,
+  accessory: 'CROWN',
+  level: 4,
+  xp: 65,
+  hunger: 82,
+  happiness: 90,
+  energy: 75,
+  cleanliness: 92,
+  health: 96,
   isSleeping: false,
   lastFedBy: 'Leo',
   lastPlayedBy: 'Mia',
@@ -47,39 +123,56 @@ export const INITIAL_PET: import('../types').PetState = {
   lastUpdated: Date.now(),
 };
 
-export const INITIAL_MEMORIES: import('../types').Memory[] = [
+export const INITIAL_MEMORIES: Memory[] = [
   {
     id: 'mem_1',
     coupleId: 'ROOM_882910',
-    title: 'Our Sunny Beach Picnic 🌊',
-    caption: 'Watching the sunset with ice cream and warm ocean breeze.',
+    title: 'Golden Hour Beach Picnic',
+    caption: 'Watching the amber waves roll in with strawberry gelato and our favorite acoustic playlist.',
     author: 'Leo',
     imageType: 'SUMMER_BEACH',
-    rotationDegrees: -3.5,
-    timestamp: Date.now() - 3 * 24 * 3600 * 1000,
+    rotationDegrees: -2.8,
+    location: 'Sunset Cove',
+    isFavorite: true,
+    timestamp: Date.now() - 4 * 24 * 3600 * 1000,
   },
   {
     id: 'mem_2',
     coupleId: 'ROOM_882910',
-    title: 'Cozy Lavender Café Date ☕',
-    caption: 'You ordered caramel macchiato and read poetry to me.',
+    title: 'Lavender Café & Bookshop',
+    caption: 'You ordered an iced honey oat latte and underlined your favorite poems for me to read.',
     author: 'Mia',
     imageType: 'CAFE_DATE',
-    rotationDegrees: 4.2,
-    timestamp: Date.now() - 1 * 24 * 3600 * 1000,
+    rotationDegrees: 3.1,
+    location: 'Botanica Roasters',
+    isFavorite: true,
+    timestamp: Date.now() - 2 * 24 * 3600 * 1000,
+  },
+  {
+    id: 'mem_3',
+    coupleId: 'ROOM_882910',
+    title: 'Midnight Stargazing Blanket',
+    caption: 'Pointing out Orion and making wishes on airplanes pretending they were shooting stars.',
+    author: 'Leo',
+    imageType: 'STARRY_CAMPING',
+    rotationDegrees: -1.9,
+    location: 'Pine Ridge Overlook',
+    isFavorite: false,
+    timestamp: Date.now() - 12 * 3600 * 1000,
   },
 ];
 
-export const INITIAL_SNAP: import('../types').SnapPhoto = {
+export const INITIAL_SNAP: SnapPhoto = {
   id: 'snap_1',
   coupleId: 'ROOM_882910',
   sender: 'Mia',
   imageType: 'COZY_COFFEE',
-  note: 'Thinking of you while drinking morning tea 💕',
-  timestamp: Date.now() - 2 * 3600 * 1000, // 2 hours ago (within 24h)
+  note: 'Saved the warmest corner seat for you. Miss your laugh already 💕',
+  reactions: ['❤️', '🥺', '☕'],
+  timestamp: Date.now() - 2 * 3600 * 1000,
 };
 
-export const INITIAL_EXPENSES: import('../types').Expense[] = [
+export const INITIAL_EXPENSES: Expense[] = [
   {
     id: 'exp_1',
     coupleId: 'ROOM_882910',
@@ -92,7 +185,7 @@ export const INITIAL_EXPENSES: import('../types').Expense[] = [
   {
     id: 'exp_2',
     coupleId: 'ROOM_882910',
-    title: 'Cinema & Popcorn Night',
+    title: 'Indie Cinema & Truffle Popcorn',
     amount: 28.0,
     category: 'Activities & Dates',
     paidBy: 'Mia',
@@ -101,29 +194,197 @@ export const INITIAL_EXPENSES: import('../types').Expense[] = [
   {
     id: 'exp_3',
     coupleId: 'ROOM_882910',
-    title: 'Matcha Ice Cream Crepes',
-    amount: 14.0,
+    title: 'Matcha Mille Crepe Cake',
+    amount: 18.5,
     category: 'Food & Cafés',
     paidBy: 'Leo',
     timestamp: Date.now() - 6 * 3600 * 1000,
   },
+  {
+    id: 'exp_4',
+    coupleId: 'ROOM_882910',
+    title: 'Warm String Fairy Lights',
+    amount: 22.0,
+    category: 'Living Space',
+    paidBy: 'Mia',
+    timestamp: Date.now() - 3 * 3600 * 1000,
+  },
 ];
 
-export const INITIAL_SAVINGS: import('../types').SavingGoal[] = [
+export const INITIAL_SAVINGS: SavingGoal[] = [
   {
     id: 'goal_1',
     coupleId: 'ROOM_882910',
-    title: 'Our Tokyo Dream Trip ✈️',
+    title: 'Autumn Kyoto Getaway',
+    emoji: '🍁',
     targetAmount: 3500.0,
-    currentSaved: 1450.0,
+    currentSaved: 1650.0,
     timestamp: Date.now(),
   },
   {
     id: 'goal_2',
     coupleId: 'ROOM_882910',
-    title: 'Cozy Living Room Projector 📽️',
-    targetAmount: 400.0,
-    currentSaved: 280.0,
+    title: 'Cozy Home Cinema Projector',
+    emoji: '📽️',
+    targetAmount: 450.0,
+    currentSaved: 325.0,
     timestamp: Date.now(),
+  },
+  {
+    id: 'goal_3',
+    coupleId: 'ROOM_882910',
+    title: 'Anniversary Omakase Dinner',
+    emoji: '🍣',
+    targetAmount: 240.0,
+    currentSaved: 180.0,
+    timestamp: Date.now(),
+  },
+];
+
+export const INITIAL_DAILY_QUESTION: DailyQuestion = {
+  id: 'dq_1',
+  question: 'What is a small, ordinary moment from this past month when you felt most loved by me?',
+  category: 'Intimacy & Gratitude',
+  partner1Answer: 'When you tucked a warm blanket around my shoulders while I was working late and didn’t say a word.',
+  partner2Answer: 'When you remembered my exact iced latte order and brought it over in the pouring rain.',
+  timestamp: Date.now(),
+};
+
+export const INITIAL_LETTERS: LoveLetter[] = [
+  {
+    id: 'let_1',
+    sender: 'Mia',
+    recipient: 'Leo',
+    title: 'For When You Have a Long Day',
+    body: 'My dearest Leo, whenever the world feels too loud or heavy, close your eyes and remember that you always have a quiet harbor right here with me. I am endlessly proud of the gentle, thoughtful person you are.',
+    waxColor: '#EE5D6C',
+    isRead: true,
+    timestamp: Date.now() - 5 * 24 * 3600 * 1000,
+  },
+  {
+    id: 'let_2',
+    sender: 'Leo',
+    recipient: 'Mia',
+    title: '100 Days & Counting',
+    body: 'Every morning since we met has felt a little brighter. Thank you for turning the simplest grocery runs and rainy evenings into my favorite memories.',
+    waxColor: '#9D74E7',
+    isRead: false,
+    timestamp: Date.now() - 1 * 24 * 3600 * 1000,
+  },
+];
+
+export const INITIAL_COUPONS: LoveCoupon[] = [
+  {
+    id: 'cp_1',
+    title: '20-Minute Shoulder & Back Massage',
+    description: 'Redeemable anytime after a long workday. Includes calming music & warm oil.',
+    emoji: '💆‍♀️',
+    fromPartner: 'Leo',
+    isRedeemed: false,
+  },
+  {
+    id: 'cp_2',
+    title: 'Homemade Breakfast in Bed',
+    description: 'Pancakes, fresh berries, and warm coffee brought straight to your pillow.',
+    emoji: '🥞',
+    fromPartner: 'Mia',
+    isRedeemed: false,
+  },
+  {
+    id: 'cp_3',
+    title: 'Undisputed Movie Night Veto Power',
+    description: 'Holder gets 100% authority over tonight’s film & snack selection.',
+    emoji: '🍿',
+    fromPartner: 'Leo',
+    isRedeemed: false,
+  },
+  {
+    id: 'cp_4',
+    title: 'Late Night Ice Cream Run',
+    description: 'Valid even at 11:30 PM in pajamas. Two scoops minimum.',
+    emoji: '🍨',
+    fromPartner: 'Mia',
+    isRedeemed: true,
+    redeemedAt: Date.now() - 86400000,
+  },
+];
+
+export const INITIAL_BUCKET_LIST: BucketItem[] = [
+  {
+    id: 'bk_1',
+    title: 'Build a living room blanket fort & watch a trilogy',
+    category: 'Cozy',
+    isCompleted: true,
+    completedDate: 'Oct 14',
+  },
+  {
+    id: 'bk_2',
+    title: 'Cook handmade fresh pasta from scratch together',
+    category: 'Food',
+    isCompleted: true,
+    completedDate: 'Oct 21',
+  },
+  {
+    id: 'bk_3',
+    title: 'Watch the sunrise from a mountain overlook with thermoses',
+    category: 'Adventure',
+    isCompleted: false,
+  },
+  {
+    id: 'bk_4',
+    title: 'Take a pottery wheel class and paint each other’s mugs',
+    category: 'Cozy',
+    isCompleted: false,
+  },
+  {
+    id: 'bk_5',
+    title: 'Stroll under autumn maple leaves in Kyoto',
+    category: 'Travel',
+    isCompleted: false,
+  },
+];
+
+export const DATE_JAR_IDEAS = [
+  {
+    title: 'Candlelit Cushion-Fort Picnic',
+    budget: 'FREE',
+    duration: '2 hrs',
+    emoji: '⛺',
+    description: 'Drape bedsheets over chairs, string up warm fairy lights, bring pillows and finger foods, and play acoustic vinyl tracks.',
+  },
+  {
+    title: 'Portrait Sketching Challenge',
+    budget: 'FREE',
+    duration: '45 mins',
+    emoji: '🎨',
+    description: 'Sit across from each other with paper and pens—try drawing each other without looking down at the page until the 3-minute timer rings!',
+  },
+  {
+    title: 'Bookstore Blind-Date Pick',
+    budget: 'COZY',
+    duration: '1.5 hrs',
+    emoji: '📚',
+    description: 'Head to a local bookshop, split up for 15 minutes, and pick out one book or magazine you think the other person will adore.',
+  },
+  {
+    title: 'Midnight Rooftop Stargazing & Cocoa',
+    budget: 'FREE',
+    duration: '1 hr',
+    emoji: '🌌',
+    description: 'Brew peppermint hot chocolate in a thermos, bring two thick blankets outside, and share your top 3 childhood memories.',
+  },
+  {
+    title: '3-Course Grocery Store Challenge',
+    budget: 'COZY',
+    duration: '2 hrs',
+    emoji: '🛒',
+    description: 'Each partner gets $10 and 10 minutes to secretly pick an appetizer, drink, or dessert for a surprise tasting menu at home.',
+  },
+  {
+    title: 'Botanical Conservatory & Film Camera Walk',
+    budget: 'ADVENTURE',
+    duration: '3 hrs',
+    emoji: '🌿',
+    description: 'Wander through a greenhouse or arboretum taking candid disposable-style photos of each other among the ferns.',
   },
 ];

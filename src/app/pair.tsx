@@ -9,27 +9,30 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useWeSpace } from '../context/WeSpaceContext';
 import { CoupleState } from '../types';
-import { COLORS } from '../constants/theme';
-import { Heart, Sparkles, Lock } from 'lucide-react-native';
+import { COLORS, INITIAL_COUPLE } from '../constants/theme';
+import { Heart, Sparkles, Lock, Calendar } from 'lucide-react-native';
 
-interface PairingScreenProps {
-  onPairSuccess: (state: CoupleState) => void;
-}
+export default function PairingScreen() {
+  const { pairSuccess } = useWeSpace();
 
-export const PairingScreen: React.FC<PairingScreenProps> = ({ onPairSuccess }) => {
   const [partner1, setPartner1] = useState('Leo');
   const [partner2, setPartner2] = useState('Mia');
   const [code, setCode] = useState('882910');
   const [days, setDays] = useState('124');
+  const [anniversary, setAnniversary] = useState('June 26, 2026');
 
   const handlePair = () => {
     const p1 = partner1.trim() || 'Leo';
     const p2 = partner2.trim() || 'Mia';
-    const roomCode = code.trim() || 'ROOM_123456';
-    const parsedDays = parseInt(days, 10) || 100;
+    const roomCode = code.trim() || '882910';
+    const parsedDays = parseInt(days, 10) || 124;
 
     const newState: CoupleState = {
+      ...INITIAL_COUPLE,
       coupleId: `ROOM_${roomCode}`,
       isPaired: true,
       partner1Name: p1,
@@ -37,9 +40,11 @@ export const PairingScreen: React.FC<PairingScreenProps> = ({ onPairSuccess }) =
       pairingCode: roomCode,
       activeUser: p1,
       daysTogether: parsedDays,
+      anniversaryDate: anniversary.trim() || 'June 26, 2026',
     };
 
-    onPairSuccess(newState);
+    pairSuccess(newState);
+    router.replace('/(tabs)');
   };
 
   return (
@@ -47,22 +52,26 @@ export const PairingScreen: React.FC<PairingScreenProps> = ({ onPairSuccess }) =
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Logo / Badge */}
-        <View style={styles.iconCircle}>
-          <Heart size={44} color={COLORS.RoseCoral} fill={COLORS.RoseCoral} />
-        </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <LinearGradient
+          colors={[COLORS.SoftRose, '#FFF5F6']}
+          style={styles.iconCircle}
+        >
+          <Heart size={42} color={COLORS.RoseCoral} fill={COLORS.RoseCoral} />
+        </LinearGradient>
 
         <Text style={styles.brandTitle}>WeSpace</Text>
         <Text style={styles.tagline}>
-          An intimate, private sanctuary built exclusively for two.
+          An intimate, private virtual sanctuary built exclusively for two hearts.
         </Text>
 
-        {/* Pairing Form Card */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Sparkles size={18} color={COLORS.HoneyYellow} />
-            <Text style={styles.cardTitle}>Pair Your Sanctuary</Text>
+            <Text style={styles.cardTitle}>Link Your Sanctuary</Text>
           </View>
 
           <Text style={styles.inputLabel}>Your Name</Text>
@@ -71,7 +80,7 @@ export const PairingScreen: React.FC<PairingScreenProps> = ({ onPairSuccess }) =
             value={partner1}
             onChangeText={setPartner1}
             placeholder="e.g. Leo"
-            placeholderTextColor="#AAA"
+            placeholderTextColor="#A89F98"
           />
 
           <Text style={styles.inputLabel}>Partner's Name</Text>
@@ -80,48 +89,75 @@ export const PairingScreen: React.FC<PairingScreenProps> = ({ onPairSuccess }) =
             value={partner2}
             onChangeText={setPartner2}
             placeholder="e.g. Mia"
-            placeholderTextColor="#AAA"
+            placeholderTextColor="#A89F98"
           />
 
-          <Text style={styles.inputLabel}>Room Code (Share this with partner)</Text>
+          <Text style={styles.inputLabel}>Private Room Pairing Code</Text>
           <View style={styles.codeInputWrapper}>
-            <Lock size={16} color={COLORS.WarmCharcoalMuted} style={{ marginRight: 8 }} />
+            <Lock
+              size={16}
+              color={COLORS.WarmCharcoalMuted}
+              style={{ marginRight: 8 }}
+            />
             <TextInput
               style={styles.codeInput}
               value={code}
               onChangeText={setCode}
               placeholder="e.g. 882910"
-              placeholderTextColor="#AAA"
+              placeholderTextColor="#A89F98"
               autoCapitalize="characters"
             />
           </View>
 
-          <Text style={styles.inputLabel}>Days Together</Text>
-          <TextInput
-            style={styles.input}
-            value={days}
-            onChangeText={setDays}
-            placeholder="e.g. 124"
-            keyboardType="numeric"
-            placeholderTextColor="#AAA"
-          />
+          <View style={styles.rowInputs}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.inputLabel}>Days Together</Text>
+              <TextInput
+                style={styles.input}
+                value={days}
+                onChangeText={setDays}
+                placeholder="124"
+                keyboardType="numeric"
+                placeholderTextColor="#A89F98"
+              />
+            </View>
+            <View style={{ flex: 1.4 }}>
+              <Text style={styles.inputLabel}>Anniversary Date</Text>
+              <View style={styles.codeInputWrapper}>
+                <Calendar
+                  size={14}
+                  color={COLORS.WarmCharcoalMuted}
+                  style={{ marginRight: 6 }}
+                />
+                <TextInput
+                  style={[styles.codeInput, { color: COLORS.WarmCharcoal, fontSize: 13 }]}
+                  value={anniversary}
+                  onChangeText={setAnniversary}
+                  placeholder="June 26, 2026"
+                  placeholderTextColor="#A89F98"
+                />
+              </View>
+            </View>
+          </View>
 
           <TouchableOpacity
             style={styles.submitButton}
             onPress={handlePair}
             activeOpacity={0.85}
           >
-            <Text style={styles.submitButtonText}>Enter Our Sanctuary 💕</Text>
+            <Text style={styles.submitButtonText}>
+              Enter Our Sanctuary 💕
+            </Text>
           </TouchableOpacity>
         </View>
 
         <Text style={styles.footerNote}>
-          End-to-end private • Procedural Tamagotchi • Live Locket Snaps
+          End-to-end Cozy • Procedural Tamagotchi • Gemini 3.8 AI Diary
         </Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -130,7 +166,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 80,
+    paddingTop: 70,
     paddingBottom: 40,
     alignItems: 'center',
   },
@@ -138,43 +174,34 @@ const styles = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 44,
-    backgroundColor: COLORS.SoftRose,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
-    shadowColor: COLORS.RoseCoral,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#FECDD3',
   },
   brandTitle: {
-    fontSize: 32,
+    fontSize: 34,
     fontWeight: '900',
     color: COLORS.WarmCharcoal,
-    letterSpacing: 0.5,
+    letterSpacing: 0.4,
   },
   tagline: {
     fontSize: 14,
     color: COLORS.WarmCharcoalMuted,
     textAlign: 'center',
     marginTop: 6,
-    marginBottom: 32,
-    paddingHorizontal: 20,
+    marginBottom: 28,
+    paddingHorizontal: 18,
     lineHeight: 20,
   },
   card: {
     width: '100%',
     backgroundColor: COLORS.CozyCream,
-    borderRadius: 24,
+    borderRadius: 26,
     padding: 22,
     borderWidth: 1,
     borderColor: COLORS.ShadowBeige,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 3,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -183,13 +210,13 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: '900',
     color: COLORS.WarmCharcoal,
     marginLeft: 6,
   },
   inputLabel: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.WarmCharcoal,
     marginBottom: 6,
   },
@@ -204,6 +231,10 @@ const styles = StyleSheet.create({
     color: COLORS.WarmCharcoal,
     marginBottom: 14,
   },
+  rowInputs: {
+    flexDirection: 'row',
+    gap: 10,
+  },
   codeInputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -211,38 +242,34 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.ShadowBeige,
     borderRadius: 12,
-    paddingHorizontal: 14,
+    paddingHorizontal: 12,
     marginBottom: 14,
   },
   codeInput: {
     flex: 1,
     paddingVertical: 10,
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.RoseCoral,
     letterSpacing: 1,
   },
   submitButton: {
     backgroundColor: COLORS.RoseCoral,
-    borderRadius: 14,
-    paddingVertical: 14,
+    borderRadius: 16,
+    paddingVertical: 15,
     alignItems: 'center',
-    marginTop: 8,
-    shadowColor: COLORS.RoseCoral,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    marginTop: 6,
   },
   submitButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   footerNote: {
-    marginTop: 28,
+    marginTop: 24,
     fontSize: 11,
     color: COLORS.WarmCharcoalMuted,
     textAlign: 'center',
+    fontWeight: '600',
   },
 });
