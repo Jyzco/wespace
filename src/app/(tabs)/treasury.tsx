@@ -9,6 +9,7 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useWeSpace } from '../../context/WeSpaceContext';
 import { Expense, SavingGoal, ExpenseCategory } from '../../types';
 import { COLORS } from '../../constants/theme';
@@ -186,11 +187,16 @@ export default function TreasuryScreen() {
       showsVerticalScrollIndicator={false}
     >
       {/* 1. MONTHLY SHARED BUDGET CARD */}
-      <View style={styles.budgetCard}>
+      <LinearGradient
+        colors={['#DCF0FF', '#FFFFFF', '#FFE4F0']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.budgetCard}
+      >
         <View style={styles.budgetHeader}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={styles.walletIconBox}>
-              <Wallet size={16} color={COLORS.RoseCoral} />
+              <Wallet size={16} color={COLORS.HotPink} />
             </View>
             <Text style={styles.budgetLabel}>Nest Treasury Budget</Text>
           </View>
@@ -201,7 +207,7 @@ export default function TreasuryScreen() {
               setLimitModalOpen(true);
             }}
           >
-            <Edit2 size={11} color={COLORS.WarmCharcoalMuted} />
+            <Edit2 size={11} color="#0284C7" />
             <Text style={styles.editLimitText}>Edit Limit</Text>
           </TouchableOpacity>
         </View>
@@ -214,14 +220,17 @@ export default function TreasuryScreen() {
         </View>
 
         <View style={styles.progressBarTrack}>
-          <View
+          <LinearGradient
+            colors={
+              budgetRatio > 0.9
+                ? ['#F43F5E', '#E11D48']
+                : ['#38BDF8', '#FF2D78']
+            }
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
             style={[
               styles.progressBarFill,
-              {
-                width: `${budgetRatio * 100}%`,
-                backgroundColor:
-                  budgetRatio > 0.9 ? COLORS.Danger : COLORS.RoseCoral,
-              },
+              { width: `${budgetRatio * 100}%` },
             ]}
           />
         </View>
@@ -237,13 +246,13 @@ export default function TreasuryScreen() {
             ${Math.max(0, budgetLimit.monthlyLimit - totalSpent).toFixed(2)} left
           </Text>
         </View>
-      </View>
+      </LinearGradient>
 
       {/* 2. 50/50 DEBT SETTLEMENT CALCULATOR */}
       <View style={styles.settlementCard}>
         <View style={styles.settlementTop}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Scale size={17} color="#047857" />
+            <Scale size={17} color="#0284C7" />
             <Text style={styles.settlementHeading}>
               50/50 Fair Split Calculator
             </Text>
@@ -269,7 +278,7 @@ export default function TreasuryScreen() {
       {totalSpent > 0 && (
         <View style={styles.breakdownCard}>
           <View style={styles.breakdownHeader}>
-            <PieChart size={15} color={COLORS.WarmCharcoal} />
+            <PieChart size={15} color={COLORS.HotPink} />
             <Text style={styles.breakdownTitle}>Category Breakdown</Text>
           </View>
 
@@ -319,7 +328,7 @@ export default function TreasuryScreen() {
       <View style={styles.aiCard}>
         <View style={styles.aiHeader}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Sparkles size={17} color="#D97706" />
+            <Sparkles size={17} color={COLORS.HotPink} />
             <Text style={styles.aiTitle}>WeSpace Financial Co-pilot</Text>
           </View>
           <TouchableOpacity
@@ -328,7 +337,7 @@ export default function TreasuryScreen() {
             disabled={aiLoading}
           >
             {aiLoading ? (
-              <ActivityIndicator size="small" color="#5C3E00" />
+              <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
               <Text style={styles.aiButtonText}>Generate Insight ✨</Text>
             )}
@@ -680,12 +689,16 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   budgetCard: {
-    backgroundColor: COLORS.CozyCream,
     borderRadius: 24,
     padding: 18,
-    borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
     marginBottom: 14,
+    shadowColor: '#38BDF8',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 4,
   },
   budgetHeader: {
     flexDirection: 'row',
@@ -697,7 +710,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 10,
-    backgroundColor: COLORS.SoftRose,
+    backgroundColor: '#FFF0F6',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
@@ -710,16 +723,18 @@ const styles = StyleSheet.create({
   editLimitBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F3ECE4',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#BAE6FD',
     gap: 4,
   },
   editLimitText: {
     fontSize: 11,
-    fontWeight: '700',
-    color: COLORS.WarmCharcoalMuted,
+    fontWeight: '800',
+    color: '#0284C7',
   },
   budgetNumbersRow: {
     flexDirection: 'row',
@@ -739,10 +754,12 @@ const styles = StyleSheet.create({
   },
   progressBarTrack: {
     height: 10,
-    backgroundColor: '#EBE2D8',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
     borderRadius: 5,
     overflow: 'hidden',
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#BAE6FD',
   },
   progressBarFill: {
     height: '100%',

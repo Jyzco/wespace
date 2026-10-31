@@ -4,9 +4,9 @@ import {
   Text,
   TouchableOpacity,
   Animated,
-  Dimensions,
+  View,
 } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Path, Defs, LinearGradient, Stop, Circle } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { COLORS } from '../../constants/theme';
 
@@ -15,8 +15,6 @@ interface HeartHugOverlayProps {
   sender: string;
   onDismiss: () => void;
 }
-
-const { width, height } = Dimensions.get('window');
 
 export const HeartHugOverlay: React.FC<HeartHugOverlayProps> = ({
   visible,
@@ -28,48 +26,44 @@ export const HeartHugOverlay: React.FC<HeartHugOverlayProps> = ({
 
   useEffect(() => {
     if (visible) {
-      // Fade in
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 300,
+        duration: 280,
         useNativeDriver: true,
       }).start();
 
-      // Trigger soft haptic
       try {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       } catch {
-        // Haptics optional on web/simulator
+        // Optional on web
       }
 
-      // Heartbeat pulse loop (700ms)
       const heartbeat = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, {
-            toValue: 1.35,
-            duration: 250,
+            toValue: 1.32,
+            duration: 240,
             useNativeDriver: true,
           }),
           Animated.timing(pulseAnim, {
-            toValue: 0.85,
-            duration: 200,
+            toValue: 0.88,
+            duration: 190,
             useNativeDriver: true,
           }),
           Animated.timing(pulseAnim, {
-            toValue: 1.15,
+            toValue: 1.16,
             duration: 150,
             useNativeDriver: true,
           }),
           Animated.timing(pulseAnim, {
             toValue: 1.0,
-            duration: 100,
+            duration: 110,
             useNativeDriver: true,
           }),
         ])
       );
       heartbeat.start();
 
-      // Auto dismiss after 4.5 seconds
       const timer = setTimeout(() => {
         dismiss();
       }, 4500);
@@ -99,7 +93,7 @@ export const HeartHugOverlay: React.FC<HeartHugOverlayProps> = ({
   return (
     <Animated.View style={[styles.overlay, { opacity: fadeAnim }]}>
       <TouchableOpacity
-        activeOpacity={0.9}
+        activeOpacity={0.95}
         style={styles.touchArea}
         onPress={dismiss}
       >
@@ -111,23 +105,42 @@ export const HeartHugOverlay: React.FC<HeartHugOverlayProps> = ({
             },
           ]}
         >
-          <Svg width="150" height="150" viewBox="0 0 100 100">
+          <Svg width="170" height="170" viewBox="0 0 120 120">
+            <Defs>
+              <LinearGradient id="hugHeartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <Stop offset="0%" stopColor="#FF85B3" />
+                <Stop offset="50%" stopColor="#FF2D78" />
+                <Stop offset="100%" stopColor="#D81159" />
+              </LinearGradient>
+            </Defs>
+            <Circle cx="60" cy="60" r="56" fill="#FF2D78" opacity={0.22} />
+            <Circle cx="60" cy="60" r="44" fill="#38BDF8" opacity={0.18} />
             <Path
-              d="M 50 88 
-                 C 20 62, 5 45, 5 28 
-                 C 5 12, 17 5, 32 5 
-                 C 40 5, 47 10, 50 16 
-                 C 53 10, 60 5, 68 5 
-                 C 83 5, 95 12, 95 28 
-                 C 95 45, 80 62, 50 88 Z"
-              fill={COLORS.RoseCoral}
+              d="M 60 100 
+                 C 26 72, 10 54, 10 35 
+                 C 10 18, 23 10, 39 10 
+                 C 48 10, 56 15, 60 22 
+                 C 64 15, 72 10, 81 10 
+                 C 97 10, 110 18, 110 35 
+                 C 110 54, 94 72, 60 100 Z"
+              fill="url(#hugHeartGrad)"
+              stroke="#FFFFFF"
+              strokeWidth="2.5"
             />
+            <Circle cx="38" cy="30" r="5" fill="#FFFFFF" opacity={0.65} />
           </Svg>
         </Animated.View>
 
-        <Text style={styles.title}>{sender} sent you a Heart Hug! 💕</Text>
-        <Text style={styles.subtitle}>Feeling your warmth across the screen</Text>
-        <Text style={styles.tapToDismiss}>Tap anywhere to close</Text>
+        <View style={styles.pillTag}>
+          <Text style={styles.pillTagText}>LIVE HEARTBEAT SYNC</Text>
+        </View>
+        <Text style={styles.title}>{sender} sent a Heart Hug! 💗</Text>
+        <Text style={styles.subtitle}>
+          Wrapping you in warm sky-blue & pink clouds across the distance
+        </Text>
+        <View style={styles.dismissPill}>
+          <Text style={styles.tapToDismiss}>Tap anywhere to close ✨</Text>
+        </View>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -138,9 +151,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    width,
-    height,
-    backgroundColor: 'rgba(15, 23, 42, 0.92)',
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(15, 23, 42, 0.88)',
     zIndex: 9999,
     justifyContent: 'center',
     alignItems: 'center',
@@ -150,34 +163,57 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 28,
   },
   heartWrapper: {
-    marginBottom: 28,
+    marginBottom: 20,
     shadowColor: COLORS.HotPink,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.75,
-    shadowRadius: 20,
-    elevation: 12,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.65,
+    shadowRadius: 24,
+    elevation: 14,
+  },
+  pillTag: {
+    backgroundColor: 'rgba(56, 189, 248, 0.2)',
+    borderWidth: 1,
+    borderColor: '#7DD3FC',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 20,
+    marginBottom: 10,
+  },
+  pillTagText: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: '#7DD3FC',
+    letterSpacing: 1.2,
   },
   title: {
     fontSize: 24,
-    fontWeight: '800',
+    fontWeight: '900',
     color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 8,
-    letterSpacing: 0.5,
+    letterSpacing: -0.3,
   },
   subtitle: {
-    fontSize: 15,
-    color: '#BAE6FD',
+    fontSize: 14,
+    color: '#E0F2FE',
     textAlign: 'center',
-    opacity: 0.9,
-    marginBottom: 32,
+    lineHeight: 20,
+    marginBottom: 28,
+    maxWidth: 280,
+  },
+  dismissPill: {
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
   },
   tapToDismiss: {
-    fontSize: 13,
-    color: '#94A3B8',
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#BAE6FD',
     textAlign: 'center',
   },
 });

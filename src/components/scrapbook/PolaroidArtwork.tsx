@@ -20,46 +20,60 @@ interface PolaroidArtworkProps {
 
 export const PolaroidArtwork: React.FC<PolaroidArtworkProps> = ({
   scene,
-  height = 175,
+  height = 195,
 }) => {
   const renderScene = () => {
     switch (scene) {
       case 'SUMMER_BEACH':
       case 'SUNSET_WALK':
         return (
-          <Svg width="100%" height={height} viewBox="0 0 300 180" preserveAspectRatio="xMidYMid slice">
+          <Svg width="100%" height={height} viewBox="0 0 340 200" preserveAspectRatio="xMidYMid slice">
             <Defs>
-              <LinearGradient id="sunsetSky" x1="0%" y1="0%" x2="0%" y2="100%">
-                <Stop offset="0%" stopColor="#FF7E67" />
-                <Stop offset="55%" stopColor="#FFB86F" />
-                <Stop offset="100%" stopColor="#FFE8A3" />
+              <LinearGradient id="cottonCandySky" x1="0%" y1="0%" x2="0%" y2="100%">
+                <Stop offset="0%" stopColor="#7DD3FC" />
+                <Stop offset="48%" stopColor="#F9A8D4" />
+                <Stop offset="100%" stopColor="#FFE4EF" />
               </LinearGradient>
-              <LinearGradient id="oceanWater" x1="0%" y1="0%" x2="0%" y2="100%">
-                <Stop offset="0%" stopColor="#2A9D8F" />
-                <Stop offset="100%" stopColor="#1D6B75" />
+              <LinearGradient id="crystalOcean" x1="0%" y1="0%" x2="0%" y2="100%">
+                <Stop offset="0%" stopColor="#38BDF8" />
+                <Stop offset="100%" stopColor="#0284C7" />
               </LinearGradient>
             </Defs>
-            <Rect x="0" y="0" width="300" height="180" fill="url(#sunsetSky)" />
-            {/* Glowing Sun */}
-            <Circle cx="150" cy="92" r="38" fill="#FFF3B0" opacity={0.45} />
-            <Circle cx="150" cy="92" r="26" fill="#FFFDF0" />
-            {/* Ocean horizon */}
-            <Rect x="0" y="108" width="300" height="45" fill="url(#oceanWater)" />
-            {/* Sun reflection shimmers */}
-            <Line x1="132" y1="115" x2="168" y2="115" stroke="#FFE8A3" strokeWidth="3" strokeLinecap="round" />
-            <Line x1="138" y1="123" x2="162" y2="123" stroke="#FFE8A3" strokeWidth="2.5" strokeLinecap="round" />
-            <Line x1="143" y1="131" x2="157" y2="131" stroke="#FFE8A3" strokeWidth="2" strokeLinecap="round" />
-            {/* Warm sandy beach */}
-            <Path d="M 0 142 Q 150 130 300 148 L 300 180 L 0 180 Z" fill="#F4C98E" />
-            {/* Two silhouettes holding hands */}
-            <Circle cx="141" cy="134" r="6" fill="#2A2421" />
-            <Path d="M 135 141 Q 141 139 147 141 L 145 162 L 137 162 Z" fill="#2A2421" />
-            <Circle cx="159" cy="136" r="5.5" fill="#2A2421" />
-            <Path d="M 153 143 Q 159 141 165 143 L 163 162 L 155 162 Z" fill="#2A2421" />
-            {/* Small floating heart between them */}
+            <Rect x="0" y="0" width="340" height="200" fill="url(#cottonCandySky)" />
+            {/* Dreamy Bokeh Orbs & Clouds */}
+            <Circle cx="65" cy="42" r="24" fill="#FFFFFF" opacity={0.35} />
+            <Circle cx="280" cy="36" r="18" fill="#FFFFFF" opacity={0.4} />
+            {/* Glowing Pastel Sun */}
+            <Circle cx="170" cy="96" r="46" fill="#FFF0F6" opacity={0.45} />
+            <Circle cx="170" cy="96" r="32" fill="#FFFFFF" opacity={0.95} />
+            {/* Soft Fluffy Horizon Clouds */}
+            <G fill="#FFFFFF" opacity={0.85}>
+              <Circle cx="52" cy="96" r="16" />
+              <Circle cx="72" cy="92" r="22" />
+              <Circle cx="94" cy="98" r="15" />
+              <Circle cx="255" cy="94" r="18" />
+              <Circle cx="278" cy="90" r="22" />
+              <Circle cx="300" cy="96" r="15" />
+            </G>
+            {/* Crystal Turquoise Ocean */}
+            <Rect x="0" y="116" width="340" height="52" fill="url(#crystalOcean)" />
+            {/* Shimmering Pink & White Water Reflections */}
+            <Line x1="142" y1="124" x2="198" y2="124" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" opacity={0.9} />
+            <Line x1="150" y1="132" x2="190" y2="132" stroke="#FFE4EF" strokeWidth="2.5" strokeLinecap="round" opacity={0.85} />
+            <Line x1="158" y1="140" x2="182" y2="140" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" opacity={0.8} />
+            {/* Pearl White & Blush Sand */}
+            <Path d="M 0 156 Q 170 140 340 160 L 340 200 L 0 200 Z" fill="#FFF5F9" />
+            <Path d="M 0 156 Q 170 140 340 160" stroke="#FFFFFF" strokeWidth="3" fill="none" />
+            {/* Cute Couple Silhouettes */}
+            <Circle cx="158" cy="144" r="7.5" fill="#0F172A" />
+            <Path d="M 149 153 Q 158 149 167 153 L 165 178 L 151 178 Z" fill="#0284C7" />
+            <Circle cx="182" cy="146" r="7" fill="#0F172A" />
+            <Path d="M 174 155 Q 182 151 190 155 L 188 178 L 176 178 Z" fill="#FF2D78" />
+            {/* Glowing Floating Heart */}
+            <Circle cx="170" cy="128" r="11" fill="#FF2D78" opacity={0.25} />
             <Path
-              d="M 150 124 C 147 121 144 119 144 116 C 144 114 146 113 148 113 C 149 113 150 114 150 115 C 150 114 151 113 152 113 C 154 113 156 114 156 116 C 156 119 153 121 150 124 Z"
-              fill="#EE5D6C"
+              d="M 170 134 C 165 129 161 126 161 122 C 161 119 163.5 117 166 117 C 168 117 169.2 118 170 119.5 C 170.8 118 172 117 174 117 C 176.5 117 179 119 179 122 C 179 126 175 129 170 134 Z"
+              fill="#FF2D78"
             />
           </Svg>
         );
@@ -67,130 +81,170 @@ export const PolaroidArtwork: React.FC<PolaroidArtworkProps> = ({
       case 'CAFE_DATE':
       case 'COZY_COFFEE':
         return (
-          <Svg width="100%" height={height} viewBox="0 0 300 180" preserveAspectRatio="xMidYMid slice">
+          <Svg width="100%" height={height} viewBox="0 0 340 200" preserveAspectRatio="xMidYMid slice">
             <Defs>
-              <LinearGradient id="cafeBg" x1="0%" y1="0%" x2="0%" y2="100%">
-                <Stop offset="0%" stopColor="#4A3427" />
-                <Stop offset="100%" stopColor="#7C5841" />
+              <LinearGradient id="cloudCafeBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <Stop offset="0%" stopColor="#E0F2FE" />
+                <Stop offset="55%" stopColor="#F0F8FF" />
+                <Stop offset="100%" stopColor="#FFE4EF" />
+              </LinearGradient>
+              <LinearGradient id="windowSky" x1="0%" y1="0%" x2="0%" y2="100%">
+                <Stop offset="0%" stopColor="#7DD3FC" />
+                <Stop offset="100%" stopColor="#E0F2FE" />
               </LinearGradient>
             </Defs>
-            <Rect x="0" y="0" width="300" height="180" fill="url(#cafeBg)" />
-            {/* Warm Hanging Pendant Lamp */}
-            <Circle cx="150" cy="42" r="46" fill="#F4B942" opacity={0.22} />
-            <Line x1="150" y1="0" x2="150" y2="28" stroke="#2A2421" strokeWidth="2.5" />
-            <Path d="M 132 28 Q 150 16 168 28 Z" fill="#D97706" />
-            <Circle cx="150" cy="31" r="6" fill="#FFFBEB" />
-            {/* Wooden Table */}
-            <Rect x="0" y="126" width="300" height="54" fill="#9C6B49" />
-            <Line x1="0" y1="126" x2="300" y2="126" stroke="#6B442A" strokeWidth="3" />
-            {/* Two Latte Cups */}
-            <G transform="translate(88, 92)">
-              <Rect x="0" y="10" width="36" height="28" rx="6" fill="#FFFAF3" />
-              <Path d="M 36 15 C 44 15 44 31 36 31" stroke="#FFFAF3" strokeWidth="3.5" fill="none" />
-              <Ellipse cx="18" cy="38" rx="24" ry="4" fill="#EADDD0" />
-              <Path d="M 12 4 Q 16 -4 12 -10" stroke="#FFF8EB" strokeWidth="2" fill="none" opacity={0.7} />
-              <Path d="M 24 6 Q 28 -2 24 -8" stroke="#FFF8EB" strokeWidth="2" fill="none" opacity={0.7} />
+            {/* Pastel Sky & Blush Interior Wall */}
+            <Rect x="0" y="0" width="340" height="200" fill="url(#cloudCafeBg)" />
+            {/* Arched Parisian Café Window */}
+            <Path
+              d="M 85 135 L 85 58 A 85 52 0 0 1 255 58 L 255 135 Z"
+              fill="url(#windowSky)"
+              stroke="#FFFFFF"
+              strokeWidth="6"
+            />
+            {/* Clouds Inside Window */}
+            <G fill="#FFFFFF" opacity={0.9}>
+              <Circle cx="135" cy="72" r="18" />
+              <Circle cx="158" cy="68" r="24" />
+              <Circle cx="182" cy="74" r="16" />
+              <Circle cx="215" cy="54" r="14" />
             </G>
-            <G transform="translate(172, 96)">
-              <Rect x="0" y="6" width="34" height="26" rx="6" fill="#FFE4E6" />
-              <Path d="M 34 11 C 41 11 41 25 34 25" stroke="#FFE4E6" strokeWidth="3.5" fill="none" />
-              <Ellipse cx="17" cy="32" rx="22" ry="4" fill="#FECDD3" />
-              <Path d="M 14 0 Q 18 -6 14 -12" stroke="#FFF8EB" strokeWidth="2" fill="none" opacity={0.7} />
+            {/* Window Panes */}
+            <Line x1="170" y1="12" x2="170" y2="135" stroke="#FFFFFF" strokeWidth="4" />
+            <Line x1="85" y1="88" x2="255" y2="88" stroke="#FFFFFF" strokeWidth="4" />
+            {/* Hanging Rose-Gold Heart Lamp */}
+            <Line x1="170" y1="0" x2="170" y2="28" stroke="#FF85B3" strokeWidth="2.5" />
+            <Circle cx="170" cy="34" r="16" fill="#FFF0F6" opacity={0.7} />
+            <Circle cx="170" cy="34" r="8" fill="#FF2D78" />
+            {/* Crisp White & Ice-Blue Marble Café Table */}
+            <Rect x="0" y="132" width="340" height="68" fill="#FFFFFF" />
+            <Line x1="0" y1="132" x2="340" y2="132" stroke="#BAE6FD" strokeWidth="4" />
+            {/* Left Cup: Sky Cloud Iced Latte */}
+            <G transform="translate(88, 94)">
+              <Ellipse cx="24" cy="48" rx="30" ry="6" fill="#E0F2FE" />
+              <Rect x="4" y="12" width="40" height="34" rx="10" fill="#BAE6FD" stroke="#FFFFFF" strokeWidth="3" />
+              <Path d="M 44 18 C 54 18 54 36 44 36" stroke="#38BDF8" strokeWidth="4" fill="none" />
+              {/* Whipped cream top */}
+              <Ellipse cx="24" cy="12" rx="18" ry="6" fill="#FFFFFF" />
+              {/* Cute Pink Straw */}
+              <Line x1="28" y1="8" x2="36" y2="-8" stroke="#FF2D78" strokeWidth="4" strokeLinecap="round" />
             </G>
-            {/* Open Poetry Book */}
-            <Path d="M 132 132 Q 150 126 168 132 L 166 148 Q 150 144 134 148 Z" fill="#FFFDF9" />
+            {/* Right Cup: Strawberry Rose Latte */}
+            <G transform="translate(204, 96)">
+              <Ellipse cx="24" cy="46" rx="30" ry="6" fill="#FFE4EF" />
+              <Rect x="4" y="10" width="40" height="34" rx="10" fill="#FF85B3" stroke="#FFFFFF" strokeWidth="3" />
+              <Path d="M 44 16 C 54 16 54 34 44 34" stroke="#FF2D78" strokeWidth="4" fill="none" />
+              <Ellipse cx="24" cy="10" rx="18" ry="6" fill="#FFF0F6" />
+              {/* Heart Latte Art */}
+              <Circle cx="24" cy="26" r="6" fill="#FFFFFF" opacity={0.9} />
+            </G>
+            {/* Floating Love Sparkles Between Cups */}
+            <Path
+              d="M 170 112 C 163 105 157 100 157 94 C 157 89 161 86 165 86 C 167.5 86 169 87.5 170 89.5 C 171 87.5 172.5 86 175 86 C 179 86 183 89 183 94 C 183 100 177 105 170 112 Z"
+              fill="#FF2D78"
+            />
+            <Circle cx="148" cy="82" r="3" fill="#38BDF8" />
+            <Circle cx="192" cy="84" r="3.5" fill="#FF2D78" />
           </Svg>
         );
 
       case 'PARK_PICNIC':
       case 'SMILE_GOOFY':
         return (
-          <Svg width="100%" height={height} viewBox="0 0 300 180" preserveAspectRatio="xMidYMid slice">
+          <Svg width="100%" height={height} viewBox="0 0 340 200" preserveAspectRatio="xMidYMid slice">
             <Defs>
-              <LinearGradient id="meadowSky" x1="0%" y1="0%" x2="0%" y2="100%">
-                <Stop offset="0%" stopColor="#90E0EF" />
-                <Stop offset="100%" stopColor="#E0F7FA" />
+              <LinearGradient id="sakuraSky" x1="0%" y1="0%" x2="0%" y2="100%">
+                <Stop offset="0%" stopColor="#BAE6FD" />
+                <Stop offset="100%" stopColor="#FFF0F6" />
               </LinearGradient>
             </Defs>
-            <Rect x="0" y="0" width="300" height="180" fill="url(#meadowSky)" />
-            {/* Soft Fluffy Clouds */}
-            <G fill="#FFFFFF" opacity={0.9}>
-              <Circle cx="75" cy="44" r="16" />
-              <Circle cx="92" cy="40" r="20" />
-              <Circle cx="110" cy="46" r="14" />
-              <Circle cx="215" cy="36" r="14" />
-              <Circle cx="232" cy="34" r="18" />
+            <Rect x="0" y="0" width="340" height="200" fill="url(#sakuraSky)" />
+            {/* Fluffy Clouds */}
+            <G fill="#FFFFFF" opacity={0.95}>
+              <Circle cx="78" cy="44" r="18" />
+              <Circle cx="100" cy="38" r="24" />
+              <Circle cx="122" cy="46" r="16" />
+              <Circle cx="240" cy="38" r="16" />
+              <Circle cx="262" cy="34" r="22" />
+              <Circle cx="284" cy="42" r="15" />
             </G>
-            {/* Rolling Green Hills */}
-            <Path d="M 0 112 Q 95 78 210 115 L 300 105 L 300 180 L 0 180 Z" fill="#74C69D" />
-            <Path d="M 0 128 Q 160 98 300 132 L 300 180 L 0 180 Z" fill="#52B788" />
-            {/* Checkered Picnic Blanket */}
-            <Path d="M 85 142 L 215 142 L 235 172 L 65 172 Z" fill="#EE5D6C" />
-            <Path d="M 115 142 L 185 142 L 195 172 L 105 172 Z" fill="#FFFAF3" opacity={0.85} />
-            {/* Picnic Basket */}
-            <Rect x="132" y="122" width="36" height="24" rx="5" fill="#C68B59" stroke="#8C5830" strokeWidth="2" />
-            <Path d="M 138 122 C 138 108 162 108 162 122" stroke="#8C5830" strokeWidth="2.5" fill="none" />
+            {/* Dreamy Pastel Blue & Blush Hills */}
+            <Path d="M 0 118 Q 110 82 230 120 L 340 106 L 340 200 L 0 200 Z" fill="#7DD3FC" opacity={0.65} />
+            <Path d="M 0 132 Q 180 102 340 136 L 340 200 L 0 200 Z" fill="#38BDF8" opacity={0.5} />
+            {/* Crisp White & Hot-Pink Gingham Picnic Blanket */}
+            <Path d="M 75 144 L 265 144 L 290 184 L 50 184 Z" fill="#FFFFFF" stroke="#FFC2DF" strokeWidth="2.5" />
+            <Path d="M 115 144 L 225 144 L 240 184 L 100 184 Z" fill="#FFE4EF" />
+            <Path d="M 150 144 L 190 144 L 196 184 L 144 184 Z" fill="#FF2D78" opacity={0.85} />
+            {/* Cute White & Pink Strawberry Cake */}
+            <Rect x="148" y="118" width="44" height="28" rx="8" fill="#FFFFFF" stroke="#FF85B3" strokeWidth="2.5" />
+            <Path d="M 148 128 Q 170 135 192 128" stroke="#FF2D78" strokeWidth="3" fill="none" />
+            <Circle cx="170" cy="114" r="6" fill="#FF2D78" />
+            {/* Floating Sakura Petals */}
+            <Circle cx="64" cy="84" r="4" fill="#FF85B3" />
+            <Circle cx="195" cy="72" r="3.5" fill="#FF2D78" />
+            <Circle cx="275" cy="88" r="4.5" fill="#FF85B3" />
           </Svg>
         );
 
       case 'STARRY_CAMPING':
       case 'BEDTIME_STUFF':
         return (
-          <Svg width="100%" height={height} viewBox="0 0 300 180" preserveAspectRatio="xMidYMid slice">
+          <Svg width="100%" height={height} viewBox="0 0 340 200" preserveAspectRatio="xMidYMid slice">
             <Defs>
-              <LinearGradient id="nightSky" x1="0%" y1="0%" x2="0%" y2="100%">
-                <Stop offset="0%" stopColor="#191636" />
-                <Stop offset="65%" stopColor="#2E295E" />
-                <Stop offset="100%" stopColor="#4A3E7A" />
+              <LinearGradient id="celestialNight" x1="0%" y1="0%" x2="0%" y2="100%">
+                <Stop offset="0%" stopColor="#0F172A" />
+                <Stop offset="55%" stopColor="#1E3A8A" />
+                <Stop offset="100%" stopColor="#831843" />
               </LinearGradient>
             </Defs>
-            <Rect x="0" y="0" width="300" height="180" fill="url(#nightSky)" />
-            {/* Stars */}
-            <Circle cx="42" cy="28" r="2" fill="#FFF3B0" />
-            <Circle cx="88" cy="48" r="1.5" fill="#FFFFFF" />
-            <Circle cx="130" cy="22" r="2.2" fill="#FFF3B0" />
-            <Circle cx="185" cy="36" r="1.6" fill="#FFFFFF" />
-            <Circle cx="255" cy="26" r="2" fill="#FFF3B0" />
-            <Circle cx="222" cy="64" r="1.5" fill="#FFFFFF" />
-            <Circle cx="64" cy="76" r="1.8" fill="#FFF3B0" />
-            {/* Crescent Moon */}
-            <Circle cx="236" cy="44" r="18" fill="#FDE68A" />
-            <Circle cx="243" cy="39" r="15" fill="#211D45" />
-            {/* Mountain Silhouette */}
-            <Path d="M 0 138 L 68 86 L 135 135 L 215 78 L 300 138 L 300 180 L 0 180 Z" fill="#1E1B38" />
-            {/* Glowing Cozy Tent */}
-            <Path d="M 110 158 L 150 106 L 190 158 Z" fill="#F4B942" stroke="#D97706" strokeWidth="2" />
-            <Path d="M 136 158 L 150 125 L 164 158 Z" fill="#FFFBEB" />
+            <Rect x="0" y="0" width="340" height="200" fill="url(#celestialNight)" />
+            {/* Twinkling Stars & Shooting Star */}
+            <Circle cx="48" cy="30" r="2.2" fill="#FFFFFF" />
+            <Circle cx="96" cy="52" r="1.8" fill="#7DD3FC" />
+            <Circle cx="145" cy="24" r="2.5" fill="#FF85B3" />
+            <Circle cx="205" cy="38" r="1.8" fill="#FFFFFF" />
+            <Circle cx="290" cy="28" r="2.2" fill="#7DD3FC" />
+            <Line x1="65" y1="22" x2="105" y2="42" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" opacity={0.8} />
+            {/* Glowing Pearl Crescent Moon */}
+            <Circle cx="266" cy="48" r="26" fill="#E0F2FE" opacity={0.2} />
+            <Circle cx="266" cy="48" r="18" fill="#FFFFFF" />
+            <Circle cx="274" cy="43" r="15" fill="#172B63" />
+            {/* Blue Velvet Mountain Silhouette */}
+            <Path d="M 0 148 L 80 92 L 155 142 L 245 84 L 340 148 L 340 200 L 0 200 Z" fill="#0F172A" opacity={0.75} />
+            {/* Glowing Hot-Pink & White Glamping Tent */}
+            <Circle cx="170" cy="148" r="48" fill="#FF2D78" opacity={0.22} />
+            <Path d="M 124 168 L 170 108 L 216 168 Z" fill="#FFFFFF" stroke="#FF85B3" strokeWidth="3" />
+            <Path d="M 152 168 L 170 128 L 188 168 Z" fill="#FF2D78" />
           </Svg>
         );
 
       case 'RAINY_MOVIE':
       case 'MIRROR_SELFIE':
         return (
-          <Svg width="100%" height={height} viewBox="0 0 300 180" preserveAspectRatio="xMidYMid slice">
+          <Svg width="100%" height={height} viewBox="0 0 340 200" preserveAspectRatio="xMidYMid slice">
             <Defs>
-              <LinearGradient id="rainBg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <Stop offset="0%" stopColor="#334155" />
-                <Stop offset="100%" stopColor="#1E293B" />
+              <LinearGradient id="cinemaBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <Stop offset="0%" stopColor="#E0F2FE" />
+                <Stop offset="100%" stopColor="#FCE7F3" />
               </LinearGradient>
             </Defs>
-            <Rect x="0" y="0" width="300" height="180" fill="url(#rainBg)" />
-            {/* Rain streaks */}
-            <G stroke="#93C5FD" strokeWidth="1.5" opacity={0.5} strokeLinecap="round">
-              <Line x1="50" y1="20" x2="40" y2="42" />
-              <Line x1="95" y1="35" x2="85" y2="57" />
-              <Line x1="160" y1="15" x2="150" y2="37" />
-              <Line x1="220" y1="40" x2="210" y2="62" />
-              <Line x1="260" y1="22" x2="250" y2="44" />
-              <Line x1="75" y1="85" x2="65" y2="107" />
-              <Line x1="200" y1="90" x2="190" y2="112" />
+            <Rect x="0" y="0" width="340" height="200" fill="url(#cinemaBg)" />
+            {/* Soft Sky Rain Streaks */}
+            <G stroke="#38BDF8" strokeWidth="2" opacity={0.45} strokeLinecap="round">
+              <Line x1="45" y1="20" x2="33" y2="46" />
+              <Line x1="88" y1="35" x2="76" y2="61" />
+              <Line x1="265" y1="24" x2="253" y2="50" />
+              <Line x1="305" y1="45" x2="293" y2="71" />
             </G>
-            {/* Warm Glowing Projector Screen */}
-            <Rect x="75" y="42" width="150" height="90" rx="10" fill="#FFFBEB" stroke="#F4B942" strokeWidth="3" />
+            {/* Floating White Cinema Screen with Hot-Pink Frame */}
+            <Rect x="82" y="34" width="176" height="106" rx="18" fill="#FFFFFF" stroke="#FF85B3" strokeWidth="4" />
+            <Circle cx="170" cy="87" r="34" fill="#FFF0F6" />
             <Path
-              d="M 150 104 C 132 88 122 76 122 65 C 122 56 130 50 138 50 C 144 50 148 54 150 58 C 152 54 156 50 162 50 C 170 50 178 56 178 65 C 178 76 168 88 150 104 Z"
-              fill="#FF1493"
+              d="M 170 108 C 152 92 142 80 142 69 C 142 60 150 54 158 54 C 164 54 168 58 170 62 C 172 58 176 54 182 54 C 190 54 198 60 198 69 C 198 80 188 92 170 108 Z"
+              fill="#FF2D78"
             />
+            {/* Cozy Cloud Sofa Silhouette at Bottom */}
+            <Rect x="96" y="152" width="148" height="48" rx="22" fill="#38BDF8" opacity={0.35} />
           </Svg>
         );
 
@@ -198,22 +252,30 @@ export const PolaroidArtwork: React.FC<PolaroidArtworkProps> = ({
       case 'HOMEMADE_MEAL':
       default:
         return (
-          <Svg width="100%" height={height} viewBox="0 0 300 180" preserveAspectRatio="xMidYMid slice">
+          <Svg width="100%" height={height} viewBox="0 0 340 200" preserveAspectRatio="xMidYMid slice">
             <Defs>
-              <LinearGradient id="kitchenBg" x1="0%" y1="0%" x2="0%" y2="100%">
-                <Stop offset="0%" stopColor="#FFF1F2" />
-                <Stop offset="100%" stopColor="#FFE4E6" />
+              <LinearGradient id="patisserieBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <Stop offset="0%" stopColor="#E0F2FE" />
+                <Stop offset="50%" stopColor="#FFFFFF" />
+                <Stop offset="100%" stopColor="#FFE4EF" />
               </LinearGradient>
             </Defs>
-            <Rect x="0" y="0" width="300" height="180" fill="url(#kitchenBg)" />
-            <Circle cx="150" cy="85" r="56" fill="#FFFFFF" stroke="#FECDD3" strokeWidth="3" />
-            <Circle cx="150" cy="85" r="42" fill="#FFFDF9" stroke="#FDA4AF" strokeWidth="1.5" />
-            {/* Pasta / Sweet Dish Illustration */}
-            <Circle cx="150" cy="85" r="26" fill="#FDE68A" />
-            <Circle cx="142" cy="79" r="6" fill="#FF1493" />
-            <Circle cx="158" cy="83" r="6" fill="#FF1493" />
-            <Circle cx="148" cy="93" r="6" fill="#FF1493" />
-            <Path d="M 145 72 Q 150 65 156 72" stroke="#10B981" strokeWidth="3" fill="none" strokeLinecap="round" />
+            <Rect x="0" y="0" width="340" height="200" fill="url(#patisserieBg)" />
+            {/* Decorative Polka Dots */}
+            <Circle cx="52" cy="44" r="8" fill="#BAE6FD" opacity={0.6} />
+            <Circle cx="288" cy="52" r="10" fill="#FFC2DF" opacity={0.6} />
+            <Circle cx="64" cy="148" r="12" fill="#FFC2DF" opacity={0.5} />
+            <Circle cx="278" cy="144" r="9" fill="#BAE6FD" opacity={0.6} />
+            {/* Porcelain Plate */}
+            <Circle cx="170" cy="100" r="64" fill="#FFFFFF" stroke="#BAE6FD" strokeWidth="4" />
+            <Circle cx="170" cy="100" r="48" fill="#F8FBFF" stroke="#E0F2FE" strokeWidth="2" />
+            {/* Fluffy Pink & White Strawberry Soufflé Pancakes */}
+            <Circle cx="170" cy="100" r="30" fill="#FFE4EF" stroke="#FF85B3" strokeWidth="2.5" />
+            <Circle cx="170" cy="96" r="16" fill="#FFFFFF" />
+            {/* Fresh Hot-Pink Berries */}
+            <Circle cx="162" cy="92" r="6.5" fill="#FF2D78" />
+            <Circle cx="178" cy="94" r="6.5" fill="#FF2D78" />
+            <Circle cx="170" cy="104" r="6.5" fill="#FF2D78" />
           </Svg>
         );
     }
@@ -225,7 +287,7 @@ export const PolaroidArtwork: React.FC<PolaroidArtworkProps> = ({
 const styles = StyleSheet.create({
   wrapper: {
     width: '100%',
-    borderRadius: 12,
+    borderRadius: 18,
     overflow: 'hidden',
   },
 });

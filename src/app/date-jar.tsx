@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Rect, Path, Circle, G } from 'react-native-svg';
 import { useWeSpace } from '../context/WeSpaceContext';
 import { COLORS, DATE_JAR_IDEAS } from '../constants/theme';
@@ -85,7 +86,7 @@ export default function DateJarAndBucketModal() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topHeader}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Compass size={20} color="#D97706" />
+          <Compass size={20} color={COLORS.HotPink} />
           <Text style={styles.headerTitle}>Date Spin Jar & Bucket List</Text>
         </View>
         <TouchableOpacity
@@ -102,10 +103,15 @@ export default function DateJarAndBucketModal() {
         showsVerticalScrollIndicator={false}
       >
         {/* 1. INTERACTIVE DATE NIGHT JAR */}
-        <View style={styles.jarCard}>
+        <LinearGradient
+          colors={['#E0F2FE', '#FFFFFF', '#FFF0F6']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.jarCard}
+        >
           <Text style={styles.jarCardTitle}>The Romantic Date Jar</Text>
           <Text style={styles.jarCardSub}>
-            Filter by vibe and shake the glass jar to pull tonight’s adventure!
+            Filter by vibe and shake the crystal wish jar to pull tonight’s adventure!
           </Text>
 
           {/* Budget Filter Pills */}
@@ -128,72 +134,94 @@ export default function DateJarAndBucketModal() {
                   {b === 'ALL'
                     ? 'All Vibes'
                     : b === 'FREE'
-                    ? 'Free 🌿'
+                    ? 'Free 🌸'
                     : b === 'COZY'
                     ? 'Cozy $ ☕'
-                    : 'Adventure ⛺'}
+                    : 'Adventure ✨'}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          {/* Animated SVG Mason Jar */}
+          {/* Animated Crystal Sky & Hot-Pink Wish Jar */}
           <Animated.View
             style={{
               transform: [{ translateX: shakeAnim }],
               marginVertical: 10,
             }}
           >
-            <Svg width="120" height="135" viewBox="0 0 120 135">
-              {/* Cork & Lid */}
-              <Rect x="36" y="8" width="48" height="14" rx="4" fill="#C68B59" />
-              <Rect x="32" y="18" width="56" height="8" rx="3" fill="#9C6B49" />
-              {/* Glass Jar Body */}
+            <Svg width="130" height="145" viewBox="0 0 130 145">
+              {/* Soft Aura Halo */}
+              <Circle cx="65" cy="78" r="56" fill="#E0F2FE" opacity="0.6" />
+              <Circle cx="65" cy="78" r="44" fill="#FFF0F6" opacity="0.7" />
+
+              {/* Frosted Rose-Pink Cap & Ribbon */}
+              <Rect x="41" y="10" width="48" height="14" rx="5" fill="#FF85B3" />
+              <Rect x="37" y="20" width="56" height="9" rx="4" fill="#FF2D78" />
+              {/* Cute Silk Bow on Neck */}
+              <Path d="M 55 25 C 45 18 45 32 55 25 Z" fill="#FFB3D1" />
+              <Path d="M 75 25 C 85 18 85 32 75 25 Z" fill="#FFB3D1" />
+              <Circle cx="65" cy="25" r="4" fill="#FFFFFF" />
+
+              {/* Crystal Sky-Blue Glass Body */}
               <Path
-                d="M 35 26 L 85 26 Q 98 36 98 54 L 98 112 Q 98 126 82 126 L 38 126 Q 22 126 22 112 L 22 54 Q 22 36 35 26 Z"
-                fill="#FFFBEB"
-                stroke="#F4B942"
+                d="M 40 29 L 90 29 Q 104 39 104 57 L 104 116 Q 104 132 87 132 L 43 132 Q 26 132 26 116 L 26 57 Q 26 39 40 29 Z"
+                fill="#F0F9FF"
+                stroke="#38BDF8"
                 strokeWidth="3"
               />
-              {/* Folded Paper Notes Inside */}
+              {/* Glass Specular Reflection */}
+              <Path
+                d="M 34 52 L 34 110"
+                stroke="#FFFFFF"
+                strokeWidth="4"
+                strokeLinecap="round"
+                opacity="0.9"
+              />
+
+              {/* Folded Love Capsules & Stars Inside */}
               <G>
                 <Rect
-                  x="34"
-                  y="88"
-                  width="22"
-                  height="14"
-                  rx="3"
-                  fill="#FECDD3"
-                  transform="rotate(-12 34 88)"
-                />
-                <Rect
-                  x="58"
-                  y="92"
-                  width="22"
-                  height="14"
-                  rx="3"
-                  fill="#FDE68A"
-                  transform="rotate(15 58 92)"
-                />
-                <Rect
-                  x="42"
-                  y="70"
+                  x="38"
+                  y="94"
                   width="24"
                   height="14"
-                  rx="3"
-                  fill="#DDD6FE"
-                  transform="rotate(6 42 70)"
+                  rx="7"
+                  fill="#FF2D78"
+                  transform="rotate(-12 38 94)"
                 />
                 <Rect
-                  x="62"
-                  y="74"
-                  width="20"
+                  x="64"
+                  y="98"
+                  width="24"
                   height="14"
-                  rx="3"
-                  fill="#A7F3D0"
-                  transform="rotate(-18 62 74)"
+                  rx="7"
+                  fill="#38BDF8"
+                  transform="rotate(15 64 98)"
                 />
-                <Circle cx="60" cy="54" r="8" fill="#EE5D6C" />
+                <Rect
+                  x="46"
+                  y="74"
+                  width="24"
+                  height="14"
+                  rx="7"
+                  fill="#FF85B3"
+                  transform="rotate(6 46 74)"
+                />
+                <Rect
+                  x="68"
+                  y="78"
+                  width="22"
+                  height="14"
+                  rx="7"
+                  fill="#7DD3FC"
+                  transform="rotate(-18 68 78)"
+                />
+                {/* Floating Heart in Center */}
+                <Path
+                  d="M 65 62 C 65 62 54 54 54 48 C 54 44 58 42 62 44 C 64 45 65 47 65 47 C 65 47 66 45 68 44 C 72 42 76 44 76 48 C 76 54 65 62 65 62 Z"
+                  fill="#FF2D78"
+                />
               </G>
             </Svg>
           </Animated.View>
@@ -228,7 +256,7 @@ export default function DateJarAndBucketModal() {
             <Sparkles size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
             <Text style={styles.shakeBtnText}>Shake the Date Jar ✨</Text>
           </TouchableOpacity>
-        </View>
+        </LinearGradient>
 
         {/* 2. SHARED COUPLE BUCKET LIST */}
         <View style={styles.bucketSection}>
@@ -437,15 +465,17 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   ticketTag: {
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 7,
-    paddingVertical: 2,
+    backgroundColor: '#FFF0F6',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#FFC2DF',
   },
   ticketTagText: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#B45309',
+    color: COLORS.HotPink,
   },
   ticketDuration: {
     flexDirection: 'row',
@@ -556,8 +586,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   bucketItemCompleted: {
-    backgroundColor: '#F8FAF9',
-    borderColor: '#D1FAE5',
+    backgroundColor: '#F0F9FF',
+    borderColor: '#BAE6FD',
   },
   bucketItemText: {
     fontSize: 13,

@@ -7,6 +7,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useWeSpace } from '../../context/WeSpaceContext';
 import { COLORS, MOOD_META } from '../../constants/theme';
@@ -35,7 +36,6 @@ export const Header: React.FC = () => {
   const isP1 = couple.activeUser === couple.partner1Name;
   const activeMood = isP1 ? couple.partner1Mood : couple.partner2Mood;
   const moodInfo = MOOD_META[activeMood] || MOOD_META.AFFECTIONATE;
-  const partnerName = isP1 ? couple.partner2Name : couple.partner1Name;
 
   const unreadLetters = letters.filter(
     (l) => !l.isRead && l.recipient === couple.activeUser
@@ -54,30 +54,51 @@ export const Header: React.FC = () => {
 
   return (
     <View style={styles.headerContainer}>
-      {/* Left: Live Sync + Couple Names */}
+      {/* Left: Overlapping Couple Avatar Rings + Names */}
       <View style={styles.leftRow}>
-        <View style={styles.syncBadge}>
-          <View style={styles.greenDot} />
-          <Text style={styles.syncText}>SYNC</Text>
+        <View style={styles.avatarsOverlap}>
+          <LinearGradient
+            colors={['#7DD3FC', '#0284C7']}
+            style={[styles.avatarBubble, { zIndex: 2 }]}
+          >
+            <Text style={styles.avatarInitial}>
+              {couple.partner1Name.charAt(0).toUpperCase()}
+            </Text>
+          </LinearGradient>
+          <LinearGradient
+            colors={['#FF85B3', '#FF2D78']}
+            style={[styles.avatarBubble, styles.avatarBubbleSecond]}
+          >
+            <Text style={styles.avatarInitial}>
+              {couple.partner2Name.charAt(0).toUpperCase()}
+            </Text>
+          </LinearGradient>
+          <View style={styles.onlineDot} />
         </View>
-        <View>
-          <Text style={styles.coupleNames}>
-            {couple.partner1Name} <Text style={{ color: COLORS.RoseCoral }}>♥</Text>{' '}
-            {couple.partner2Name}
-          </Text>
-          <Text style={styles.roomSub}>Sanctuary #{couple.pairingCode}</Text>
+
+        <View style={{ marginLeft: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={styles.coupleNames}>
+              {couple.partner1Name}{' '}
+              <Text style={{ color: COLORS.HotPink, fontSize: 13 }}>♥</Text>{' '}
+              {couple.partner2Name}
+            </Text>
+          </View>
+          <View style={styles.subRow}>
+            <View style={styles.liveTinyDot} />
+            <Text style={styles.roomSub}>Sanctuary #{couple.pairingCode}</Text>
+          </View>
         </View>
       </View>
 
       {/* Right: Quick Action Pills + Switch User + Settings */}
       <View style={styles.rightRow}>
-        {/* Love Letters Modal Shortcut */}
         <TouchableOpacity
-          style={styles.iconCircle}
+          style={styles.iconCirclePink}
           onPress={() => router.push('/love-letters')}
           activeOpacity={0.75}
         >
-          <Mail size={16} color={COLORS.RoseCoral} />
+          <Mail size={15} color={COLORS.HotPink} />
           {unreadLetters > 0 && (
             <View style={styles.unreadBadge}>
               <Text style={styles.unreadText}>{unreadLetters}</Text>
@@ -85,16 +106,14 @@ export const Header: React.FC = () => {
           )}
         </TouchableOpacity>
 
-        {/* Date Jar Modal Shortcut */}
         <TouchableOpacity
-          style={[styles.iconCircle, { backgroundColor: COLORS.LightBlueSoft }]}
+          style={styles.iconCircleBlue}
           onPress={() => router.push('/date-jar')}
           activeOpacity={0.75}
         >
-          <Sparkles size={16} color={COLORS.WhatsAppTeal} />
+          <Sparkles size={15} color="#0284C7" />
         </TouchableOpacity>
 
-        {/* Switch Profile Button */}
         <TouchableOpacity
           style={styles.switchButton}
           onPress={switchUser}
@@ -103,13 +122,12 @@ export const Header: React.FC = () => {
           <Text style={styles.moodEmoji}>{moodInfo.emoji}</Text>
           <Text style={styles.activeUserBadge}>{couple.activeUser}</Text>
           <RefreshCw
-            size={11}
-            color={COLORS.RoseCoral}
+            size={10}
+            color={COLORS.HotPink}
             style={{ marginLeft: 4 }}
           />
         </TouchableOpacity>
 
-        {/* Settings Button */}
         <TouchableOpacity
           style={styles.settingsBtn}
           onPress={() => {
@@ -118,7 +136,7 @@ export const Header: React.FC = () => {
           }}
           activeOpacity={0.75}
         >
-          <Settings size={16} color={COLORS.WarmCharcoal} />
+          <Settings size={15} color="#0284C7" />
         </TouchableOpacity>
       </View>
 
@@ -133,54 +151,77 @@ export const Header: React.FC = () => {
           <View style={styles.modalCard}>
             <View style={styles.modalHeader}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <HeartHandshake size={20} color={COLORS.RoseCoral} />
+                <HeartHandshake size={20} color={COLORS.HotPink} />
                 <Text style={styles.modalTitle}>Sanctuary Settings</Text>
               </View>
-              <TouchableOpacity onPress={() => setSettingsOpen(false)}>
-                <X size={20} color={COLORS.WarmCharcoal} />
+              <TouchableOpacity
+                style={styles.closeModalCircle}
+                onPress={() => setSettingsOpen(false)}
+              >
+                <X size={18} color={COLORS.WarmCharcoal} />
               </TouchableOpacity>
             </View>
 
-            <View style={styles.infoBox}>
+            <LinearGradient
+              colors={['#F0F8FF', '#FFF0F6']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.infoBox}
+            >
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Room Code</Text>
+                <Text style={styles.infoLabel}>Private Room Code</Text>
                 <Text style={styles.infoCode}>#{couple.pairingCode}</Text>
               </View>
-              <View style={[styles.infoRow, { marginTop: 6 }]}>
-                <Text style={styles.infoLabel}>Active Perspective</Text>
+              <View style={[styles.infoRow, { marginTop: 8 }]}>
+                <Text style={styles.infoLabel}>Viewing As</Text>
                 <Text style={styles.infoValue}>
-                  {couple.activeUser} (Partner: {partnerName})
+                  {couple.activeUser} ({moodInfo.emoji} {moodInfo.label})
                 </Text>
               </View>
-            </View>
+            </LinearGradient>
 
             <Text style={styles.sectionLabel}>
-              Google Gemini API Key (gemini-3.8-flash)
+              ✨ Gemini 3.8 Flash API Key (Optional)
             </Text>
             <Text style={styles.inputHint}>
-              Powers real-time AI Romantic Scrapbook Digests, Financial Co-pilot, Love Letter Composer & Deep Talk Prompts via the Gemini Interactions API.
+              Powers real-time poetic scrapbook recaps, financial co-pilot date ideas, and AI love letters. Works offline with built-in romantic templates if left empty.
             </Text>
+
             <TextInput
               style={styles.input}
-              placeholder="AIzaSy..."
-              placeholderTextColor="#A89F98"
+              placeholder="Paste AIzaSy... key here"
+              placeholderTextColor="#94A3B8"
               value={apiKeyInput}
               onChangeText={setApiKeyInput}
               secureTextEntry
               autoCapitalize="none"
             />
 
-            <TouchableOpacity style={styles.saveButton} onPress={handleSaveKey}>
-              <Text style={styles.saveButtonText}>Save Configuration</Text>
+            <TouchableOpacity
+              style={styles.saveButtonWrap}
+              onPress={handleSaveKey}
+              activeOpacity={0.85}
+            >
+              <LinearGradient
+                colors={['#FF2D78', '#D81159']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.saveButton}
+              >
+                <Text style={styles.saveButtonText}>Save Sanctuary Settings</Text>
+              </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.unpairButton} onPress={handleUnpair}>
+            <TouchableOpacity
+              style={styles.unpairButton}
+              onPress={handleUnpair}
+            >
               <LogOut
-                size={15}
+                size={14}
                 color={COLORS.Danger}
                 style={{ marginRight: 6 }}
               />
-              <Text style={styles.unpairText}>Unpair & Reset Sanctuary</Text>
+              <Text style={styles.unpairText}>Unlink Couple Sanctuary</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -194,72 +235,107 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     paddingVertical: 10,
-    backgroundColor: COLORS.White,
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.BorderSubtle,
+    borderBottomColor: '#E2EEFA',
   },
   leftRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  syncBadge: {
+  avatarsOverlap: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E8F8EE',
-    paddingHorizontal: 7,
-    paddingVertical: 4,
-    borderRadius: 10,
-    marginRight: 9,
-    borderWidth: 1,
-    borderColor: '#C3ECD2',
+    position: 'relative',
   },
-  greenDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: COLORS.WhatsAppGreen,
-    marginRight: 4,
+  avatarBubble: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
-  syncText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: COLORS.WhatsAppTeal,
-    letterSpacing: 0.6,
+  avatarBubbleSecond: {
+    marginLeft: -10,
+    zIndex: 1,
+  },
+  avatarInitial: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  onlineDot: {
+    position: 'absolute',
+    bottom: 0,
+    right: -1,
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+    backgroundColor: '#10B981',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+    zIndex: 5,
   },
   coupleNames: {
     fontSize: 15,
     fontWeight: '900',
     color: COLORS.WarmCharcoal,
-    letterSpacing: 0.2,
+    letterSpacing: -0.2,
+  },
+  subRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 1,
+  },
+  liveTinyDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: '#38BDF8',
+    marginRight: 4,
   },
   roomSub: {
     fontSize: 10,
-    color: COLORS.WarmCharcoalLight,
-    fontWeight: '600',
+    color: '#64748B',
+    fontWeight: '700',
   },
   rightRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  iconCircle: {
+  iconCirclePink: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: COLORS.RoseCoralSoft,
+    backgroundColor: '#FFF0F6',
+    borderWidth: 1,
+    borderColor: '#FFC2DF',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
   },
+  iconCircleBlue: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#E0F2FE',
+    borderWidth: 1,
+    borderColor: '#BAE6FD',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   unreadBadge: {
     position: 'absolute',
-    top: -3,
-    right: -3,
-    backgroundColor: COLORS.RoseCoral,
-    width: 15,
-    height: 15,
+    top: -4,
+    right: -4,
+    backgroundColor: COLORS.HotPink,
+    width: 16,
+    height: 16,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -269,17 +345,17 @@ const styles = StyleSheet.create({
   unreadText: {
     color: '#FFFFFF',
     fontSize: 9,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   switchButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.SoftRose,
+    backgroundColor: '#FFF0F6',
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 18,
     borderWidth: 1,
-    borderColor: '#FBCFE8',
+    borderColor: '#FFC2DF',
   },
   moodEmoji: {
     fontSize: 12,
@@ -288,37 +364,52 @@ const styles = StyleSheet.create({
   activeUserBadge: {
     fontSize: 12,
     fontWeight: '800',
-    color: COLORS.RoseCoralDark,
+    color: COLORS.HotPink,
   },
   settingsBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: COLORS.LightBlueSoft,
+    backgroundColor: '#F0F8FF',
+    borderWidth: 1,
+    borderColor: '#BAE6FD',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.65)',
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   modalCard: {
     width: '100%',
-    maxWidth: 390,
-    backgroundColor: COLORS.White,
-    borderRadius: 24,
+    maxWidth: 380,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 28,
     padding: 22,
     borderWidth: 1,
-    borderColor: COLORS.BorderSubtle,
+    borderColor: '#DCEBFA',
+    shadowColor: '#0284C7',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 10,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
+  },
+  closeModalCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#F0F8FF',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalTitle: {
     fontSize: 18,
@@ -327,11 +418,10 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   infoBox: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    padding: 12,
+    borderRadius: 18,
+    padding: 14,
     borderWidth: 1,
-    borderColor: COLORS.BorderSubtle,
+    borderColor: '#DCEBFA',
     marginBottom: 16,
   },
   infoRow: {
@@ -342,17 +432,17 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontSize: 12,
     color: COLORS.WarmCharcoalMuted,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   infoCode: {
     fontSize: 14,
     fontWeight: '900',
-    color: COLORS.RoseCoral,
+    color: COLORS.HotPink,
     letterSpacing: 1,
   },
   infoValue: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.WarmCharcoal,
   },
   sectionLabel: {
@@ -364,31 +454,33 @@ const styles = StyleSheet.create({
   inputHint: {
     fontSize: 11,
     color: COLORS.WarmCharcoalMuted,
-    marginBottom: 8,
+    marginBottom: 10,
     lineHeight: 16,
   },
   input: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8FBFF',
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderColor: '#BAE6FD',
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
     fontSize: 14,
     color: COLORS.WarmCharcoal,
     marginBottom: 16,
   },
-  saveButton: {
-    backgroundColor: COLORS.RoseCoral,
-    paddingVertical: 12,
-    borderRadius: 14,
-    alignItems: 'center',
+  saveButtonWrap: {
+    borderRadius: 16,
+    overflow: 'hidden',
     marginBottom: 10,
+  },
+  saveButton: {
+    paddingVertical: 13,
+    alignItems: 'center',
   },
   saveButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   unpairButton: {
     flexDirection: 'row',

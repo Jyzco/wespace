@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useWeSpace } from '../../context/WeSpaceContext';
 import { PetType, PetAccessory } from '../../types';
 import { COLORS } from '../../constants/theme';
@@ -23,6 +24,7 @@ import {
   Check,
   Award,
   Shirt,
+  Heart,
 } from 'lucide-react-native';
 
 const ACCESSORIES: { id: PetAccessory; label: string; emoji: string }[] = [
@@ -174,11 +176,16 @@ export default function PetCompanionScreen() {
       showsVerticalScrollIndicator={false}
     >
       {/* 1. PET NURSERY STAGE CARD */}
-      <View style={styles.nurseryCard}>
+      <LinearGradient
+        colors={['#E0F2FE', '#FFFFFF', '#FFF0F6']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.nurseryCard}
+      >
         {/* Top Level & Name Row */}
         <View style={styles.topRow}>
           <View style={styles.levelBadge}>
-            <Award size={13} color="#B45309" />
+            <Award size={13} color={COLORS.HotPink} />
             <Text style={styles.levelText}>
               Lv. {pet.level || 4} • {pet.xp || 65}/100 XP
             </Text>
@@ -192,7 +199,7 @@ export default function PetCompanionScreen() {
             }}
           >
             <Text style={styles.petNameTitle}>{pet.petName}</Text>
-            <Edit2 size={13} color={COLORS.RoseCoral} style={{ marginLeft: 5 }} />
+            <Edit2 size={13} color={COLORS.HotPink} style={{ marginLeft: 5 }} />
           </TouchableOpacity>
         </View>
 
@@ -225,7 +232,7 @@ export default function PetCompanionScreen() {
           ))}
         </View>
 
-        {/* Procedural Pou Canvas with Tap-to-Cuddle */}
+        {/* Procedural Mochi Companion Canvas with Tap-to-Cuddle */}
         <PouPetCanvas
           pet={pet}
           activeParticle={activeParticle}
@@ -240,16 +247,16 @@ export default function PetCompanionScreen() {
               : pet.health < 35 || pet.happiness < 35
               ? `🥺 ${pet.petName} needs extra cuddles and care!`
               : pet.cleanliness < 75
-              ? `🛁 ${pet.petName} got muddy playing—time for a warm bath!`
-              : `✨ ${pet.petName} is purring with happiness in your sanctuary!`}
+              ? `🛁 ${pet.petName} got playful—time for a bubble bath!`
+              : `✨ ${pet.petName} is beaming with love in your sky sanctuary!`}
           </Text>
         </View>
-      </View>
+      </LinearGradient>
 
       {/* 2. WEARABLE PET BOUTIQUE */}
       <View style={styles.boutiqueCard}>
         <View style={styles.cardHeaderRow}>
-          <Shirt size={16} color={COLORS.RoseCoral} />
+          <Shirt size={16} color={COLORS.HotPink} />
           <Text style={styles.cardHeaderTitle}>Pet Wardrobe & Accessories</Text>
         </View>
         <ScrollView
@@ -292,10 +299,10 @@ export default function PetCompanionScreen() {
             onPress={handleFeed}
             disabled={pet.isSleeping}
           >
-            <View style={[styles.actionIcon, { backgroundColor: '#FFEDD5' }]}>
-              <Utensils size={20} color="#EA580C" />
+            <View style={[styles.actionIcon, { backgroundColor: '#FFF0F6' }]}>
+              <Utensils size={20} color={COLORS.HotPink} />
             </View>
-            <Text style={styles.actionBtnLabel}>Feed 🍖</Text>
+            <Text style={styles.actionBtnLabel}>Feed 🍓</Text>
             <Text style={styles.actionBtnSub}>+25 Hunger</Text>
           </TouchableOpacity>
 
@@ -304,10 +311,10 @@ export default function PetCompanionScreen() {
             onPress={handlePlay}
             disabled={pet.isSleeping}
           >
-            <View style={[styles.actionIcon, { backgroundColor: '#FCE7F3' }]}>
-              <Gamepad2 size={20} color="#DB2777" />
+            <View style={[styles.actionIcon, { backgroundColor: '#FFE4EF' }]}>
+              <Gamepad2 size={20} color="#D81159" />
             </View>
-            <Text style={styles.actionBtnLabel}>Play 🎾</Text>
+            <Text style={styles.actionBtnLabel}>Play 🎀</Text>
             <Text style={styles.actionBtnSub}>+20 Happy</Text>
           </TouchableOpacity>
 
@@ -315,15 +322,15 @@ export default function PetCompanionScreen() {
             <View style={[styles.actionIcon, { backgroundColor: '#E0F2FE' }]}>
               <Sparkles size={20} color="#0284C7" />
             </View>
-            <Text style={styles.actionBtnLabel}>Wash 🧼</Text>
+            <Text style={styles.actionBtnLabel}>Wash 🫧</Text>
             <Text style={styles.actionBtnSub}>100% Clean</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionBtn} onPress={handleHeal}>
-            <View style={[styles.actionIcon, { backgroundColor: '#DCFCE7' }]}>
-              <HeartPulse size={20} color="#16A34A" />
+            <View style={[styles.actionIcon, { backgroundColor: '#FFF0F6' }]}>
+              <HeartPulse size={20} color={COLORS.HotPink} />
             </View>
-            <Text style={styles.actionBtnLabel}>Heal 💊</Text>
+            <Text style={styles.actionBtnLabel}>Heal 💖</Text>
             <Text style={styles.actionBtnSub}>100% Health</Text>
           </TouchableOpacity>
 
@@ -331,8 +338,8 @@ export default function PetCompanionScreen() {
             style={[
               styles.actionBtn,
               pet.isSleeping && {
-                borderColor: COLORS.HoneyYellow,
-                backgroundColor: '#FFFBEB',
+                borderColor: COLORS.HotPink,
+                backgroundColor: '#FFF0F6',
               },
             ]}
             onPress={handleToggleSleep}
@@ -340,13 +347,13 @@ export default function PetCompanionScreen() {
             <View
               style={[
                 styles.actionIcon,
-                { backgroundColor: pet.isSleeping ? '#FEF3C7' : '#EDE9FE' },
+                { backgroundColor: pet.isSleeping ? '#FFE4EF' : '#E0F2FE' },
               ]}
             >
               {pet.isSleeping ? (
-                <Sun size={20} color="#D97706" />
+                <Sun size={20} color={COLORS.HotPink} />
               ) : (
-                <Moon size={20} color="#7C3AED" />
+                <Moon size={20} color="#0284C7" />
               )}
             </View>
             <Text style={styles.actionBtnLabel}>
@@ -362,8 +369,8 @@ export default function PetCompanionScreen() {
             onPress={handleBellyRub}
             disabled={pet.isSleeping}
           >
-            <View style={[styles.actionIcon, { backgroundColor: COLORS.SoftRose }]}>
-              <Text style={{ fontSize: 18 }}>🥰</Text>
+            <View style={[styles.actionIcon, { backgroundColor: '#FFE4EF' }]}>
+              <Heart size={20} color={COLORS.HotPink} fill={COLORS.HotPink} />
             </View>
             <Text style={styles.actionBtnLabel}>Cuddle 💕</Text>
             <Text style={styles.actionBtnSub}>+10 XP</Text>
@@ -376,11 +383,11 @@ export default function PetCompanionScreen() {
         <Text style={[styles.cardHeaderTitle, { marginBottom: 12 }]}>
           5-Parameter Vital Matrix
         </Text>
-        {renderGauge('Hunger', pet.hunger, '#F97316')}
+        {renderGauge('Hunger', pet.hunger, '#FF2D78')}
         {renderGauge('Happiness', pet.happiness, '#EC4899')}
-        {renderGauge('Energy', pet.energy, COLORS.HoneyYellow)}
-        {renderGauge('Cleanliness', pet.cleanliness, COLORS.PastelBlue)}
-        {renderGauge('Health', pet.health, '#10B981')}
+        {renderGauge('Energy', pet.energy, '#38BDF8')}
+        {renderGauge('Cleanliness', pet.cleanliness, '#0284C7')}
+        {renderGauge('Health', pet.health, '#F472B6')}
       </View>
 
       {/* 5. SHARED PARENTING LOG */}

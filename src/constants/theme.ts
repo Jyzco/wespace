@@ -13,57 +13,57 @@ import {
 } from '../types';
 
 export const COLORS = {
-  // Light Blue Tones
-  LightBlue: '#7DD3FC',
+  // Light Blue Tones (Celestial Sky & Ice)
+  LightBlue: '#38BDF8',
   LightBluePastel: '#BAE6FD',
   LightBlueSoft: '#E0F2FE',
-  LightBlueIce: '#F0F8FF',
+  LightBlueIce: '#F4F9FF',
   PastelBlue: '#38BDF8',
   PastelBlueSoft: '#E0F2FE',
-  GradientStart: '#F0F8FF',
-  GradientEnd: '#E0F2FE',
-  CozyCream: '#F0F8FF', // Soft light blue foundation
+  GradientStart: '#F4F9FF',
+  GradientEnd: '#EBF5FF',
+  CozyCream: '#F4F9FF',
 
-  // White Tones
+  // White & Glass Tones
   White: '#FFFFFF',
   SurfaceCard: '#FFFFFF',
-  SurfaceSubtle: '#F5FAFF',
+  SurfaceSubtle: '#F8FBFF',
 
-  // Hot Pink Tones
-  HotPink: '#FF1493',
-  HotPinkDark: '#D81177',
+  // Hot Pink Tones (Electric Berry & Blush)
+  HotPink: '#FF2D78',
+  HotPinkDark: '#D81159',
   HotPinkSoft: '#FFF0F6',
-  HotPinkGlow: '#FFE4F0',
-  RoseCoral: '#FF1493', // Primary Hot Pink
-  RoseCoralDark: '#D81177', // Pressed / Deep Hot Pink
-  RoseCoralSoft: '#FFF0F6', // Delicate Hot Pink Blush
-  SoftRose: '#FFE4F0', // Soft Hot Pink Pill Background
+  HotPinkGlow: '#FFE4EF',
+  RoseCoral: '#FF2D78',
+  RoseCoralDark: '#D81159',
+  RoseCoralSoft: '#FFF0F6',
+  SoftRose: '#FFE4EF',
 
-  // Secondary Accents
-  HoneyYellow: '#F59E0B',
-  HoneyYellowSoft: '#FEF3C7',
-  SoftLavender: '#A855F7',
-  SoftLavenderSoft: '#F3E8FF',
-  SageGreen: '#10B981',
-  SageGreenSoft: '#D1FAE5',
+  // Secondary Accents (Harmonized to Sky & Pink)
+  HoneyYellow: '#38BDF8',
+  HoneyYellowSoft: '#E0F2FE',
+  SoftLavender: '#EC4899',
+  SoftLavenderSoft: '#FCE7F3',
+  SageGreen: '#0EA5E9',
+  SageGreenSoft: '#E0F2FE',
 
   // Borders & Dividers
-  BorderSubtle: '#D0E7FC', // Soft Sky Blue Border
-  ShadowBeige: '#C2E0FA', // Pastel Sky Blue Divider
-  CardBorderPink: '#FFC2DF', // Faint Hot Pink Card Accent Border
+  BorderSubtle: '#DCEBFA',
+  ShadowBeige: '#CBE2F8',
+  CardBorderPink: '#FFC2DF',
 
   // Typography
-  WarmCharcoal: '#0F172A', // Crisp Midnight Slate
-  WarmCharcoalMuted: '#475569', // Slate Gray
-  WarmCharcoalLight: '#94A3B8', // Cool Light Slate
+  WarmCharcoal: '#0F172A',
+  WarmCharcoalMuted: '#475569',
+  WarmCharcoalLight: '#94A3B8',
 
   // Functional & Room
-  WhatsAppTeal: '#0284C7', // Vibrant Sky Cyan
-  WhatsAppGreen: '#10B981',
-  HearthDark: '#0C1929',
+  WhatsAppTeal: '#0284C7',
+  WhatsAppGreen: '#FF2D78',
+  HearthDark: '#0F172A',
   HearthWarm: '#1E293B',
-  Danger: '#EF4444',
-  Success: '#10B981',
+  Danger: '#F43F5E',
+  Success: '#0EA5E9',
 };
 
 export const MOOD_META: Record<
@@ -73,38 +73,38 @@ export const MOOD_META: Record<
   AFFECTIONATE: {
     emoji: '🥰',
     label: 'Feeling Loving',
-    color: '#FF1493',
-    bg: '#FFE4F0',
+    color: '#FF2D78',
+    bg: '#FFE4EF',
   },
   COZY: {
-    emoji: '🧸',
-    label: 'Cozy & Relaxed',
+    emoji: '☁️',
+    label: 'Cloud Cozy',
     color: '#0284C7',
     bg: '#E0F2FE',
   },
   COFFEE: {
-    emoji: '☕',
-    label: 'Caffeine Mode',
-    color: '#D97706',
-    bg: '#FEF3C7',
+    emoji: '🍓',
+    label: 'Strawberry Latte',
+    color: '#E11D48',
+    bg: '#FFE4E6',
   },
   DEEP_WORK: {
-    emoji: '💻',
+    emoji: '💎',
     label: 'Deep Focus',
     color: '#0284C7',
     bg: '#E0F2FE',
   },
   MISSING_YOU: {
-    emoji: '🌙',
+    emoji: '💗',
     label: 'Missing You',
-    color: '#FF1493',
-    bg: '#FFE4F0',
+    color: '#FF2D78',
+    bg: '#FFE4EF',
   },
   SLEEPY: {
-    emoji: '😴',
-    label: 'Sleepy Loaf',
-    color: '#64748B',
-    bg: '#F1F5F9',
+    emoji: '🌙',
+    label: 'Dreamy Sleepy',
+    color: '#0369A1',
+    bg: '#E0F2FE',
   },
 };
 

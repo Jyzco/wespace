@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useWeSpace } from '../../context/WeSpaceContext';
 import { COLORS } from '../../constants/theme';
 import { FireplaceCanvas } from '../../components/room/FireplaceCanvas';
@@ -31,11 +32,11 @@ import {
 } from 'lucide-react-native';
 
 const STICKY_COLORS = [
-  { hex: '#FEF9C3', border: '#FDE047', label: 'Honey' },
-  { hex: '#FFE4E6', border: '#FDA4AF', label: 'Rose' },
-  { hex: '#E0F2FE', border: '#7DD3FC', label: 'Sky' },
-  { hex: '#DCFCE7', border: '#86EFAC', label: 'Mint' },
-  { hex: '#EDE9FE', border: '#C4B5FD', label: 'Lavender' },
+  { hex: '#FFF0F6', border: '#FF85B3', label: 'Blush Pink' },
+  { hex: '#E0F2FE', border: '#38BDF8', label: 'Sky Blue' },
+  { hex: '#FFE4EF', border: '#FF2D78', label: 'Hot Pink' },
+  { hex: '#F0F9FF', border: '#7DD3FC', label: 'Ice Cloud' },
+  { hex: '#FFFFFF', border: '#BAE6FD', label: 'Pure White' },
 ];
 
 export default function LivingRoomScreen() {
@@ -133,12 +134,17 @@ export default function LivingRoomScreen() {
     >
       {/* 1. WHATSAPP-STYLE VOIP VOICE SANCTUARY */}
       <View style={styles.voipCard}>
-        <View style={styles.voipHeader}>
+        <LinearGradient
+          colors={['#38BDF8', '#0284C7']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.voipHeader}
+        >
           <View style={styles.voipIndicatorRow}>
             <View
               style={[
                 styles.voipDot,
-                { backgroundColor: inCall ? COLORS.WhatsAppGreen : '#9CA3AF' },
+                { backgroundColor: inCall ? '#4ADE80' : '#E0F2FE' },
               ]}
             />
             <Text style={styles.voipStatusText}>
@@ -146,7 +152,7 @@ export default function LivingRoomScreen() {
             </Text>
           </View>
           <Text style={styles.voipRoomTitle}>#{couple.pairingCode}</Text>
-        </View>
+        </LinearGradient>
 
         <View style={styles.voipBody}>
           <View style={styles.callerAvatars}>
@@ -189,6 +195,7 @@ export default function LivingRoomScreen() {
               <View
                 style={[
                   styles.avatarRing,
+                  { backgroundColor: '#E0F2FE', borderColor: '#7DD3FC' },
                   inCall && styles.speakingRing,
                 ]}
               >
@@ -241,26 +248,38 @@ export default function LivingRoomScreen() {
               </>
             ) : (
               <TouchableOpacity
-                style={styles.startCallBtn}
+                style={styles.startCallBtnWrap}
                 onPress={() => setInCall(true)}
                 activeOpacity={0.85}
               >
-                <Phone size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
-                <Text style={styles.startCallText}>
-                  Join Cozy Voice Room with {partnerName}
-                </Text>
+                <LinearGradient
+                  colors={['#FF2D78', '#D81159']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.startCallBtn}
+                >
+                  <Phone size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
+                  <Text style={styles.startCallText}>
+                    Join Cozy Voice Room with {partnerName}
+                  </Text>
+                </LinearGradient>
               </TouchableOpacity>
             )}
           </View>
         </View>
       </View>
 
-      {/* 2. ANIMATED CRACKLING FIREPLACE HEARTH */}
-      <View style={styles.fireplaceCard}>
+      {/* 2. ANIMATED ROSE-QUARTZ & SKY HEARTH */}
+      <LinearGradient
+        colors={['#E0F2FE', '#FFFFFF', '#FFF0F6']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.fireplaceCard}
+      >
         <View style={styles.fireplaceHeader}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Flame size={18} color="#FB923C" />
-            <Text style={styles.fireplaceTitle}>Sanctuary Hearth</Text>
+            <Flame size={18} color={COLORS.HotPink} />
+            <Text style={styles.fireplaceTitle}>Rose-Quartz Sanctuary Hearth</Text>
           </View>
 
           <View style={{ flexDirection: 'row', gap: 6 }}>
@@ -273,13 +292,15 @@ export default function LivingRoomScreen() {
               <Text style={styles.stokeText}>Dim 🌙</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.stokeBtn, { backgroundColor: '#7C2D12' }]}
+              style={[styles.stokeBtn, { backgroundColor: COLORS.HotPink }]}
               onPress={() =>
                 setFireplaceWarmth((prev) => Math.min(5, prev + 1))
               }
             >
-              <Sparkles size={11} color="#FDBA74" style={{ marginRight: 4 }} />
-              <Text style={styles.stokeText}>Stoke 🔥</Text>
+              <Sparkles size={11} color="#FFFFFF" style={{ marginRight: 4 }} />
+              <Text style={[styles.stokeText, { color: '#FFFFFF' }]}>
+                Stoke 💖
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -287,17 +308,17 @@ export default function LivingRoomScreen() {
         <FireplaceCanvas warmthLevel={fireplaceWarmth} />
 
         <View style={styles.warmthRow}>
-          <Text style={styles.warmthLabel}>Hearth Intensity:</Text>
+          <Text style={styles.warmthLabel}>Hearth Glow Level:</Text>
           <Text style={styles.warmthLevel}>
-            {'🔥'.repeat(fireplaceWarmth)}
+            {'💖'.repeat(fireplaceWarmth)}
           </Text>
         </View>
-      </View>
+      </LinearGradient>
 
       {/* 3. AMBIENT SOUNDSCAPE MIXER */}
       <View style={styles.mixerCard}>
         <View style={styles.mixerHeader}>
-          <Disc size={17} color={COLORS.RoseCoral} />
+          <Disc size={17} color={COLORS.HotPink} />
           <Text style={styles.mixerTitle}>Ambient Soundscape Mixer</Text>
           <Text style={styles.mixerHint}>Tap to adjust level</Text>
         </View>
@@ -306,27 +327,27 @@ export default function LivingRoomScreen() {
           {[
             {
               key: 'hearth' as const,
-              label: 'Crackling Logs',
-              icon: <Flame size={16} color="#EA580C" />,
-              color: '#EA580C',
+              label: 'Rose Hearth Logs',
+              icon: <Flame size={16} color={COLORS.HotPink} />,
+              color: COLORS.HotPink,
             },
             {
               key: 'rain' as const,
-              label: 'Window Rain',
+              label: 'Crystal Rain',
               icon: <CloudRain size={16} color="#0284C7" />,
               color: '#0284C7',
             },
             {
               key: 'vinyl' as const,
-              label: 'Lo-Fi Jazz Vinyl',
-              icon: <Music size={16} color="#7C3AED" />,
-              color: '#7C3AED',
+              label: 'Dreamy Lo-Fi Vinyl',
+              icon: <Music size={16} color="#EC4899" />,
+              color: '#EC4899',
             },
             {
               key: 'crickets' as const,
-              label: 'Night Crickets',
-              icon: <Radio size={16} color="#059669" />,
-              color: '#059669',
+              label: 'Starlight Breeze',
+              icon: <Radio size={16} color="#38BDF8" />,
+              color: '#38BDF8',
             },
           ].map((item) => {
             const lvl = soundMixer[item.key];
@@ -338,7 +359,7 @@ export default function LivingRoomScreen() {
                   styles.mixerTile,
                   lvl > 0 && {
                     borderColor: item.color,
-                    backgroundColor: '#FFFCFA',
+                    backgroundColor: '#FFFFFF',
                   },
                 ]}
                 onPress={() => cycleChannel(item.key)}
@@ -354,7 +375,7 @@ export default function LivingRoomScreen() {
                           styles.levelBar,
                           {
                             backgroundColor:
-                              lvl >= dot ? item.color : '#E2D9D0',
+                              lvl >= dot ? item.color : '#E0F2FE',
                           },
                         ]}
                       />
@@ -439,13 +460,13 @@ export default function LivingRoomScreen() {
               key={note.id}
               style={[
                 styles.stickyCard,
-                { backgroundColor: note.color || '#FEF9C3' },
+                { backgroundColor: note.color === '#FEF9C3' ? '#FFF0F6' : note.color || '#FFF0F6' },
               ]}
             >
               <View style={styles.stickyTopBar}>
                 <Text style={styles.stickySender}>From {note.sender}</Text>
                 <TouchableOpacity onPress={() => deleteStickyNote(note.id)}>
-                  <Trash2 size={12} color="#78716C" />
+                  <Trash2 size={12} color="#94A3B8" />
                 </TouchableOpacity>
               </View>
               <Text style={styles.stickyNoteText}>"{note.text}"</Text>
@@ -662,8 +683,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 10,
   },
+  startCallBtnWrap: {
+    width: '100%',
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: COLORS.HotPink,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 4,
+  },
   startCallBtn: {
-    backgroundColor: COLORS.WhatsAppGreen,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -677,48 +707,56 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   fireplaceCard: {
-    backgroundColor: '#221712',
     borderRadius: 26,
     padding: 16,
     alignItems: 'center',
     marginBottom: 16,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+    shadowColor: '#38BDF8',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 4,
   },
   fireplaceHeader: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 8,
   },
   fireplaceTitle: {
     fontSize: 15,
     fontWeight: '900',
-    color: '#FED7AA',
+    color: COLORS.WarmCharcoal,
     marginLeft: 6,
   },
   stokeBtn: {
-    backgroundColor: '#3E2723',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 6,
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#BAE6FD',
   },
   stokeText: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#FDBA74',
+    color: '#0284C7',
   },
   warmthRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: 8,
   },
   warmthLabel: {
     fontSize: 12,
-    color: '#D6C7B8',
+    color: COLORS.WarmCharcoalMuted,
     marginRight: 6,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   warmthLevel: {
     fontSize: 14,

@@ -9,6 +9,7 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useWeSpace } from '../../context/WeSpaceContext';
 import { Memory, MemoryImageType } from '../../types';
 import { COLORS } from '../../constants/theme';
@@ -33,39 +34,39 @@ const MEMORY_THEMES: {
 }[] = [
   {
     type: 'SUMMER_BEACH',
-    tag: 'Golden Beach',
+    tag: 'Crystal Beach',
     emoji: '🏖️',
-    tapeColor: '#FDE68A',
+    tapeColor: '#7DD3FC',
   },
   {
     type: 'CAFE_DATE',
-    tag: 'Café & Books',
+    tag: 'Cloud Café',
     emoji: '☕',
-    tapeColor: '#FECDD3',
+    tapeColor: '#FF85B3',
   },
   {
     type: 'PARK_PICNIC',
-    tag: 'Green Meadow',
-    emoji: '🧺',
-    tapeColor: '#A7F3D0',
+    tag: 'Sakura Picnic',
+    emoji: '🌸',
+    tapeColor: '#FFC2DF',
   },
   {
     type: 'STARRY_CAMPING',
-    tag: 'Starry Night',
+    tag: 'Aurora Night',
     emoji: '🌌',
-    tapeColor: '#DDD6FE',
+    tapeColor: '#38BDF8',
   },
   {
     type: 'RAINY_MOVIE',
-    tag: 'Rainy Cinema',
-    emoji: '🌧️',
+    tag: 'Cozy Cinema',
+    emoji: '🍿',
     tapeColor: '#BAE6FD',
   },
   {
     type: 'COOKING_NIGHT',
-    tag: 'Kitchen Date',
-    emoji: '🍝',
-    tapeColor: '#FBCFE8',
+    tag: 'Patisserie Date',
+    emoji: '🧁',
+    tapeColor: '#F472B6',
   },
 ];
 
@@ -152,11 +153,16 @@ export default function ScrapbookScreen() {
       showsVerticalScrollIndicator={false}
     >
       {/* 1. AI POETIC SCRAPBOOK DIGEST */}
-      <View style={styles.digestCard}>
+      <LinearGradient
+        colors={['#E0F2FE', '#FFFFFF', '#FFF0F6']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.digestCard}
+      >
         <View style={styles.digestHeader}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={styles.bookIconBox}>
-              <BookOpen size={16} color={COLORS.RoseCoral} />
+              <BookOpen size={16} color={COLORS.HotPink} />
             </View>
             <View>
               <Text style={styles.digestTitle}>AI Poetic Scrapbook Diary</Text>
@@ -191,7 +197,7 @@ export default function ScrapbookScreen() {
                 onPress={handleSaveDigest}
                 disabled={savedToast}
               >
-                <BookmarkCheck size={13} color={COLORS.RoseCoral} />
+                <BookmarkCheck size={13} color={COLORS.HotPink} />
                 <Text style={styles.saveAnthologyText}>
                   {savedToast ? 'Saved to Anthology ✓' : 'Save to Anthology'}
                 </Text>
@@ -203,7 +209,7 @@ export default function ScrapbookScreen() {
             Tap "Weave Story" to transform your pinned polaroids into an intimate, hand-crafted poetic journal entry.
           </Text>
         )}
-      </View>
+      </LinearGradient>
 
       {/* 2. HEADER & FILTER PILLS */}
       <View style={styles.sectionHeader}>
@@ -597,7 +603,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 8,
     left: 8,
-    backgroundColor: 'rgba(42, 36, 33, 0.72)',
+    backgroundColor: 'rgba(15, 23, 42, 0.72)',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
@@ -617,7 +623,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(42, 36, 33, 0.5)',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
     justifyContent: 'center',
     alignItems: 'center',
   },

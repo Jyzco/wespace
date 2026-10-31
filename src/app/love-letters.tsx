@@ -549,11 +549,11 @@ const styles = StyleSheet.create({
     color: COLORS.RoseCoral,
   },
   parchmentBody: {
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: '#FFF0F6',
     borderRadius: 14,
     padding: 14,
     borderWidth: 1,
-    borderColor: COLORS.BorderSubtle,
+    borderColor: '#FFC2DF',
   },
   letterBodyText: {
     fontSize: 13,
@@ -567,14 +567,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 14,
-    borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderWidth: 1.5,
+    borderColor: '#BAE6FD',
     borderStyle: 'dashed',
     marginBottom: 12,
   },
   couponCardRedeemed: {
-    opacity: 0.6,
-    backgroundColor: '#F8F5F1',
+    opacity: 0.65,
+    backgroundColor: '#F0F9FF',
   },
   couponLeft: {
     width: 48,

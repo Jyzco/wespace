@@ -6,11 +6,11 @@ import { useWeSpace } from '../../context/WeSpaceContext';
 import { Header } from '../../components/common/Header';
 import { COLORS } from '../../constants/theme';
 import {
-  Home,
+  Heart,
   Wallet,
-  Smile,
-  BookOpen,
-  Flame,
+  Sparkles,
+  Camera,
+  Headphones,
 } from 'lucide-react-native';
 
 export default function TabsLayout() {
@@ -30,35 +30,35 @@ export default function TabsLayout() {
           screenOptions={{
             headerShown: false,
             tabBarActiveTintColor: COLORS.HotPink,
-            tabBarInactiveTintColor: COLORS.WarmCharcoalLight,
+            tabBarInactiveTintColor: '#64748B',
             tabBarLabelStyle: {
               fontSize: 10,
               fontWeight: '800',
-              marginTop: 2,
+              marginTop: 3,
               letterSpacing: 0.2,
             },
             tabBarStyle: {
-              backgroundColor: COLORS.White,
+              backgroundColor: '#FFFFFF',
               borderTopWidth: 1,
-              borderTopColor: COLORS.BorderSubtle,
-              height: Platform.OS === 'ios' ? 84 : 68,
+              borderTopColor: '#DCEBFA',
+              height: Platform.OS === 'ios' ? 84 : 70,
               paddingTop: 8,
               paddingBottom: Platform.OS === 'ios' ? 24 : 10,
-              elevation: 14,
-              shadowColor: '#38BDF8',
-              shadowOffset: { width: 0, height: -4 },
-              shadowOpacity: 0.12,
-              shadowRadius: 12,
+              elevation: 16,
+              shadowColor: '#0284C7',
+              shadowOffset: { width: 0, height: -6 },
+              shadowOpacity: 0.08,
+              shadowRadius: 16,
             },
           }}
         >
           <Tabs.Screen
             name="index"
             options={{
-              title: 'Sanctuary',
+              title: 'Home',
               tabBarIcon: ({ color, focused }) => (
                 <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-                  <Home size={20} color={color} />
+                  <Heart size={19} color={color} fill={focused ? COLORS.HotPink : 'none'} />
                 </View>
               ),
             }}
@@ -69,7 +69,7 @@ export default function TabsLayout() {
               title: 'Treasury',
               tabBarIcon: ({ color, focused }) => (
                 <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-                  <Wallet size={20} color={color} />
+                  <Wallet size={19} color={color} />
                 </View>
               ),
             }}
@@ -80,7 +80,7 @@ export default function TabsLayout() {
               title: 'Companion',
               tabBarIcon: ({ color, focused }) => (
                 <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-                  <Smile size={20} color={color} />
+                  <Sparkles size={19} color={color} />
                 </View>
               ),
             }}
@@ -91,7 +91,7 @@ export default function TabsLayout() {
               title: 'Scrapbook',
               tabBarIcon: ({ color, focused }) => (
                 <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-                  <BookOpen size={20} color={color} />
+                  <Camera size={19} color={color} />
                 </View>
               ),
             }}
@@ -99,10 +99,10 @@ export default function TabsLayout() {
           <Tabs.Screen
             name="room"
             options={{
-              title: 'Living Room',
+              title: 'Lounge',
               tabBarIcon: ({ color, focused }) => (
                 <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-                  <Flame size={20} color={color} />
+                  <Headphones size={19} color={color} />
                 </View>
               ),
             }}
@@ -116,18 +116,18 @@ export default function TabsLayout() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.White,
+    backgroundColor: '#FFFFFF',
   },
   contentWrapper: {
     flex: 1,
     backgroundColor: COLORS.GradientStart,
   },
   iconWrap: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 4,
-    borderRadius: 14,
+    borderRadius: 16,
   },
   iconWrapActive: {
-    backgroundColor: COLORS.SoftRose,
+    backgroundColor: '#FFE4EF',
   },
 });
