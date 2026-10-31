@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     left: 0,
     width,
     height,
-    backgroundColor: 'rgba(42, 36, 33, 0.92)', // #2A2421 at 92% opacity
+    backgroundColor: 'rgba(15, 23, 42, 0.92)',
     zIndex: 9999,
     justifyContent: 'center',
     alignItems: 'center',
@@ -154,10 +154,10 @@ const styles = StyleSheet.create({
   },
   heartWrapper: {
     marginBottom: 28,
-    shadowColor: COLORS.RoseCoral,
+    shadowColor: COLORS.HotPink,
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.6,
-    shadowRadius: 18,
+    shadowOpacity: 0.75,
+    shadowRadius: 20,
     elevation: 12,
   },
   title: {
@@ -170,14 +170,14 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 15,
-    color: '#FFEcef',
+    color: '#BAE6FD',
     textAlign: 'center',
-    opacity: 0.85,
+    opacity: 0.9,
     marginBottom: 32,
   },
   tapToDismiss: {
     fontSize: 13,
-    color: '#A09893',
+    color: '#94A3B8',
     textAlign: 'center',
   },
 });

@@ -87,11 +87,11 @@ export const Header: React.FC = () => {
 
         {/* Date Jar Modal Shortcut */}
         <TouchableOpacity
-          style={[styles.iconCircle, { backgroundColor: COLORS.HoneyYellowSoft }]}
+          style={[styles.iconCircle, { backgroundColor: COLORS.LightBlueSoft }]}
           onPress={() => router.push('/date-jar')}
           activeOpacity={0.75}
         >
-          <Sparkles size={16} color="#D97706" />
+          <Sparkles size={16} color={COLORS.WhatsAppTeal} />
         </TouchableOpacity>
 
         {/* Switch Profile Button */}
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: COLORS.White,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.BorderSubtle,
   },
@@ -294,13 +294,13 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#F3ECE4',
+    backgroundColor: COLORS.LightBlueSoft,
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(42, 36, 33, 0.55)',
+    backgroundColor: 'rgba(15, 23, 42, 0.65)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -308,11 +308,11 @@ const styles = StyleSheet.create({
   modalCard: {
     width: '100%',
     maxWidth: 390,
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: COLORS.White,
     borderRadius: 24,
     padding: 22,
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: COLORS.BorderSubtle,
   },
   modalHeader: {
     flexDirection: 'row',

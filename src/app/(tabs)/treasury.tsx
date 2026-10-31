@@ -29,12 +29,12 @@ import {
 } from 'lucide-react-native';
 
 const CATEGORIES: { name: ExpenseCategory; color: string; emoji: string }[] = [
-  { name: 'Food & Cafés', color: '#EE5D6C', emoji: '☕' },
-  { name: 'Activities & Dates', color: '#9D74E7', emoji: '🎟️' },
-  { name: 'Living Space', color: '#F4B942', emoji: '🕯️' },
-  { name: 'Travel & Adventure', color: '#2A9D8F', emoji: '✈️' },
-  { name: 'Nostalgic Gifts', color: '#5EB1EF', emoji: '🎁' },
-  { name: 'Other', color: '#9C8E85', emoji: '✨' },
+  { name: 'Food & Cafés', color: '#FF1493', emoji: '☕' },
+  { name: 'Activities & Dates', color: '#38BDF8', emoji: '🎟️' },
+  { name: 'Living Space', color: '#F472B6', emoji: '🕯️' },
+  { name: 'Travel & Adventure', color: '#0284C7', emoji: '✈️' },
+  { name: 'Nostalgic Gifts', color: '#EC4899', emoji: '🎁' },
+  { name: 'Other', color: '#94A3B8', emoji: '✨' },
 ];
 
 export default function TreasuryScreen() {
@@ -763,11 +763,11 @@ const styles = StyleSheet.create({
     color: COLORS.SageGreen,
   },
   settlementCard: {
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#F0F9FF',
     borderRadius: 20,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#A7F3D0',
+    borderColor: '#BAE6FD',
     marginBottom: 14,
   },
   settlementTop: {
@@ -779,7 +779,7 @@ const styles = StyleSheet.create({
   settlementHeading: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#065F46',
+    color: '#0284C7',
     marginLeft: 6,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -787,7 +787,7 @@ const styles = StyleSheet.create({
   settleUpBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#059669',
+    backgroundColor: COLORS.HotPink,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 10,
@@ -800,11 +800,11 @@ const styles = StyleSheet.create({
   settlementResult: {
     fontSize: 21,
     fontWeight: '900',
-    color: '#064E3B',
+    color: '#0284C7',
   },
   settlementSub: {
     fontSize: 11,
-    color: '#047857',
+    color: '#0369A1',
     marginTop: 4,
   },
   breakdownCard: {
@@ -858,8 +858,13 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#FDE68A',
+    borderColor: '#D0E7FC',
     marginBottom: 18,
+    shadowColor: '#38BDF8',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 2,
   },
   aiHeader: {
     flexDirection: 'row',
@@ -874,7 +879,7 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   aiButton: {
-    backgroundColor: COLORS.HoneyYellow,
+    backgroundColor: COLORS.HotPink,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
@@ -882,14 +887,14 @@ const styles = StyleSheet.create({
   aiButtonText: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#5C3E00',
+    color: '#FFFFFF',
   },
   adviceBox: {
-    backgroundColor: '#FFFBEB',
+    backgroundColor: '#F0F8FF',
     padding: 12,
     borderRadius: 14,
     borderLeftWidth: 3,
-    borderLeftColor: COLORS.HoneyYellow,
+    borderLeftColor: '#38BDF8',
   },
   adviceText: {
     fontSize: 13,
@@ -959,18 +964,18 @@ const styles = StyleSheet.create({
   goalAmount: {
     fontSize: 15,
     fontWeight: '900',
-    color: COLORS.SageGreen,
+    color: COLORS.HotPink,
   },
   goalTrack: {
     height: 8,
-    backgroundColor: '#EBE2D8',
+    backgroundColor: '#E0F2FE',
     borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 10,
   },
   goalFill: {
     height: '100%',
-    backgroundColor: COLORS.SageGreen,
+    backgroundColor: COLORS.HotPink,
     borderRadius: 4,
   },
   depositRow: {
@@ -981,7 +986,7 @@ const styles = StyleSheet.create({
   depositChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.SageGreenSoft,
+    backgroundColor: COLORS.LightBlueSoft,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 10,
@@ -990,7 +995,7 @@ const styles = StyleSheet.create({
   depositChipText: {
     fontSize: 11,
     fontWeight: '800',
-    color: COLORS.SageGreen,
+    color: '#0284C7',
   },
   addExpenseButton: {
     flexDirection: 'row',

@@ -148,18 +148,18 @@ export default function SanctuaryDashboardScreen() {
     >
       {/* 1. HERO JOURNEY & HEART HUG BANNER */}
       <LinearGradient
-        colors={['#FFF5F6', '#FFFAF3', '#FFF0E5']}
+        colors={['#FFFFFF', '#F0F8FF', '#E0F2FE']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.heroCard}
       >
         <View style={styles.heroTopRow}>
           <View style={styles.journeyPill}>
-            <Calendar size={13} color={COLORS.RoseCoral} />
+            <Calendar size={13} color={COLORS.HotPink} />
             <Text style={styles.journeyPillText}>OUR SANCTUARY JOURNEY</Text>
           </View>
           <View style={styles.milestoneBadge}>
-            <Sparkles size={12} color="#D97706" />
+            <Sparkles size={12} color={COLORS.HotPink} />
             <Text style={styles.milestoneBadgeText}>
               {nextMilestone - couple.daysTogether}d to Day {nextMilestone}
             </Text>
@@ -183,7 +183,7 @@ export default function SanctuaryDashboardScreen() {
             activeOpacity={0.85}
           >
             <LinearGradient
-              colors={[COLORS.RoseCoral, COLORS.RoseCoralDark]}
+              colors={[COLORS.HotPink, COLORS.HotPinkDark]}
               style={styles.hugGradient}
             >
               <Heart size={18} color="#FFFFFF" fill="#FFFFFF" />
@@ -384,15 +384,15 @@ export default function SanctuaryDashboardScreen() {
 
         {/* Partner Answers */}
         <View style={styles.answersWrapper}>
-          <View style={styles.answerBubble}>
-            <Text style={styles.answerAuthor}>{couple.partner1Name}</Text>
+          <View style={[styles.answerBubble, { backgroundColor: '#F0F8FF' }]}>
+            <Text style={[styles.answerAuthor, { color: '#0284C7' }]}>{couple.partner1Name}</Text>
             <Text style={styles.answerContent}>
               {dailyQuestion.partner1Answer || 'Waiting for answer... ✍️'}
             </Text>
           </View>
 
-          <View style={[styles.answerBubble, { backgroundColor: '#FFF5F7' }]}>
-            <Text style={[styles.answerAuthor, { color: COLORS.RoseCoral }]}>
+          <View style={[styles.answerBubble, { backgroundColor: '#FFF0F6' }]}>
+            <Text style={[styles.answerAuthor, { color: COLORS.HotPink }]}>
               {couple.partner2Name}
             </Text>
             <Text style={styles.answerContent}>
@@ -412,7 +412,7 @@ export default function SanctuaryDashboardScreen() {
             setAnswerModalOpen(true);
           }}
         >
-          <Edit3 size={14} color={COLORS.SoftLavender} style={{ marginRight: 6 }} />
+          <Edit3 size={14} color={COLORS.HotPink} style={{ marginRight: 6 }} />
           <Text style={styles.writeAnswerText}>
             Write {couple.activeUser}’s Reflection
           </Text>
@@ -425,11 +425,11 @@ export default function SanctuaryDashboardScreen() {
       </Text>
       <View style={styles.portalRow}>
         <TouchableOpacity
-          style={[styles.portalCard, { backgroundColor: '#FFF1F2', borderColor: '#FECDD3' }]}
+          style={[styles.portalCard, { backgroundColor: '#FFFFFF', borderColor: '#FFC2DF' }]}
           onPress={() => router.push('/love-letters')}
           activeOpacity={0.8}
         >
-          <View style={[styles.portalIconCircle, { backgroundColor: COLORS.RoseCoral }]}>
+          <View style={[styles.portalIconCircle, { backgroundColor: COLORS.HotPink }]}>
             <Mail size={18} color="#FFFFFF" />
           </View>
           <Text style={styles.portalTitle}>Love Letters & Coupons</Text>
@@ -439,11 +439,11 @@ export default function SanctuaryDashboardScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.portalCard, { backgroundColor: '#FFFBEB', borderColor: '#FDE68A' }]}
+          style={[styles.portalCard, { backgroundColor: '#FFFFFF', borderColor: '#BAE6FD' }]}
           onPress={() => router.push('/date-jar')}
           activeOpacity={0.8}
         >
-          <View style={[styles.portalIconCircle, { backgroundColor: '#D97706' }]}>
+          <View style={[styles.portalIconCircle, { backgroundColor: '#0284C7' }]}>
             <Compass size={18} color="#FFFFFF" />
           </View>
           <Text style={styles.portalTitle}>Date Spin Jar & Bucket List</Text>
@@ -664,11 +664,11 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#FCE7EA',
+    borderColor: '#D0E7FC',
     marginBottom: 18,
-    shadowColor: COLORS.RoseCoral,
+    shadowColor: '#38BDF8',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.12,
     shadowRadius: 14,
     elevation: 3,
   },
@@ -686,19 +686,19 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#FCE7EA',
+    borderColor: '#D0E7FC',
   },
   journeyPillText: {
     fontSize: 10,
     fontWeight: '800',
-    color: COLORS.RoseCoral,
+    color: COLORS.HotPink,
     marginLeft: 5,
     letterSpacing: 0.8,
   },
   milestoneBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#E0F2FE',
     paddingHorizontal: 9,
     paddingVertical: 4,
     borderRadius: 12,
@@ -706,7 +706,7 @@ const styles = StyleSheet.create({
   milestoneBadgeText: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#B45309',
+    color: '#0284C7',
     marginLeft: 4,
   },
   heroCenterRow: {
@@ -757,13 +757,13 @@ const styles = StyleSheet.create({
   },
   milestoneTrack: {
     height: 6,
-    backgroundColor: '#F5E1E4',
+    backgroundColor: '#E0F2FE',
     borderRadius: 3,
     overflow: 'hidden',
   },
   milestoneFill: {
     height: '100%',
-    backgroundColor: COLORS.RoseCoral,
+    backgroundColor: COLORS.HotPink,
     borderRadius: 3,
   },
   sectionTitleRow: {
@@ -789,7 +789,7 @@ const styles = StyleSheet.create({
   editMoodChipText: {
     fontSize: 11,
     fontWeight: '800',
-    color: COLORS.RoseCoral,
+    color: COLORS.HotPink,
     marginLeft: 4,
   },
   presenceGrid: {
@@ -807,8 +807,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.BorderSubtle,
   },
   activeUserBorder: {
-    borderColor: '#FDA4AF',
-    backgroundColor: '#FFFCFC',
+    borderColor: '#FF69B4',
+    backgroundColor: '#FFF5F9',
   },
   presenceCardHeader: {
     flexDirection: 'row',
@@ -859,12 +859,17 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   locketContainer: {
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: '#FFFFFF',
     borderRadius: 24,
     padding: 16,
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: '#D0E7FC',
     marginBottom: 18,
+    shadowColor: '#38BDF8',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 2,
   },
   locketHeader: {
     flexDirection: 'row',
@@ -893,7 +898,7 @@ const styles = StyleSheet.create({
   expiryTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#E0F2FE',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 10,
@@ -901,7 +906,7 @@ const styles = StyleSheet.create({
   expiryTagText: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#B45309',
+    color: '#0284C7',
     marginLeft: 4,
   },
   locketBody: {
@@ -1015,8 +1020,13 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#E9D5FF',
+    borderColor: '#D0E7FC',
     marginBottom: 18,
+    shadowColor: '#38BDF8',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 2,
   },
   questionHeader: {
     flexDirection: 'row',
@@ -1027,7 +1037,7 @@ const styles = StyleSheet.create({
   questionCategoryPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.SoftLavenderSoft,
+    backgroundColor: COLORS.SoftRose,
     paddingHorizontal: 9,
     paddingVertical: 4,
     borderRadius: 10,
@@ -1035,7 +1045,7 @@ const styles = StyleSheet.create({
   questionCategoryText: {
     fontSize: 10,
     fontWeight: '800',
-    color: COLORS.SoftLavender,
+    color: COLORS.HotPink,
     marginLeft: 5,
     letterSpacing: 0.5,
   },
@@ -1047,7 +1057,7 @@ const styles = StyleSheet.create({
   refreshQuestionText: {
     fontSize: 11,
     fontWeight: '700',
-    color: COLORS.SoftLavender,
+    color: COLORS.HotPink,
   },
   questionTitleText: {
     fontSize: 15,
@@ -1061,14 +1071,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   answerBubble: {
-    backgroundColor: '#F8F5FF',
+    backgroundColor: '#F0F8FF',
     borderRadius: 14,
     padding: 12,
   },
   answerAuthor: {
     fontSize: 11,
     fontWeight: '800',
-    color: COLORS.SoftLavender,
+    color: COLORS.HotPink,
     marginBottom: 3,
   },
   answerContent: {
@@ -1077,7 +1087,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   writeAnswerBtn: {
-    backgroundColor: COLORS.SoftLavenderSoft,
+    backgroundColor: COLORS.SoftRose,
     borderRadius: 12,
     paddingVertical: 10,
     flexDirection: 'row',
@@ -1087,7 +1097,7 @@ const styles = StyleSheet.create({
   writeAnswerText: {
     fontSize: 12,
     fontWeight: '800',
-    color: COLORS.SoftLavender,
+    color: COLORS.HotPink,
   },
   portalRow: {
     flexDirection: 'row',
@@ -1137,8 +1147,8 @@ const styles = StyleSheet.create({
   bentoTag: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#D97706',
-    backgroundColor: '#FEF3C7',
+    color: '#0284C7',
+    backgroundColor: '#E0F2FE',
     paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 8,

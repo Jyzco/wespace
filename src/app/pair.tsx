@@ -57,10 +57,10 @@ export default function PairingScreen() {
         showsVerticalScrollIndicator={false}
       >
         <LinearGradient
-          colors={[COLORS.SoftRose, '#FFF5F6']}
+          colors={['#FFE4F0', '#E0F2FE']}
           style={styles.iconCircle}
         >
-          <Heart size={42} color={COLORS.RoseCoral} fill={COLORS.RoseCoral} />
+          <Heart size={42} color={COLORS.HotPink} fill={COLORS.HotPink} />
         </LinearGradient>
 
         <Text style={styles.brandTitle}>WeSpace</Text>
@@ -197,11 +197,16 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: '#FFFFFF',
     borderRadius: 26,
     padding: 22,
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: '#D0E7FC',
+    shadowColor: '#38BDF8',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 14,
+    elevation: 4,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -223,7 +228,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: '#D0E7FC',
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 10,
@@ -240,7 +245,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: '#D0E7FC',
     borderRadius: 12,
     paddingHorizontal: 12,
     marginBottom: 14,
@@ -250,11 +255,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 15,
     fontWeight: '800',
-    color: COLORS.RoseCoral,
+    color: COLORS.HotPink,
     letterSpacing: 1,
   },
   submitButton: {
-    backgroundColor: COLORS.RoseCoral,
+    backgroundColor: COLORS.HotPink,
     borderRadius: 16,
     paddingVertical: 15,
     alignItems: 'center',

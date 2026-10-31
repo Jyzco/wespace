@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: COLORS.White,
     justifyContent: 'center',
     alignItems: 'center',
   },

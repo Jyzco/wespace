@@ -29,7 +29,7 @@ export default function TabsLayout() {
         <Tabs
           screenOptions={{
             headerShown: false,
-            tabBarActiveTintColor: COLORS.RoseCoral,
+            tabBarActiveTintColor: COLORS.HotPink,
             tabBarInactiveTintColor: COLORS.WarmCharcoalLight,
             tabBarLabelStyle: {
               fontSize: 10,
@@ -38,16 +38,16 @@ export default function TabsLayout() {
               letterSpacing: 0.2,
             },
             tabBarStyle: {
-              backgroundColor: COLORS.CozyCream,
+              backgroundColor: COLORS.White,
               borderTopWidth: 1,
-              borderTopColor: COLORS.ShadowBeige,
+              borderTopColor: COLORS.BorderSubtle,
               height: Platform.OS === 'ios' ? 84 : 68,
               paddingTop: 8,
               paddingBottom: Platform.OS === 'ios' ? 24 : 10,
               elevation: 14,
-              shadowColor: '#2A2421',
+              shadowColor: '#38BDF8',
               shadowOffset: { width: 0, height: -4 },
-              shadowOpacity: 0.06,
+              shadowOpacity: 0.12,
               shadowRadius: 12,
             },
           }}
@@ -116,7 +116,7 @@ export default function TabsLayout() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: COLORS.White,
   },
   contentWrapper: {
     flex: 1,

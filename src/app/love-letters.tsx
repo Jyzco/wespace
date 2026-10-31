@@ -25,10 +25,10 @@ import {
 } from 'lucide-react-native';
 
 const WAX_COLORS = [
-  { hex: '#EE5D6C', label: 'Rose Wax' },
-  { hex: '#9D74E7', label: 'Violet Wax' },
-  { hex: '#D97706', label: 'Gold Wax' },
-  { hex: '#2A9D8F', label: 'Sage Wax' },
+  { hex: '#FF1493', label: 'Hot Pink Wax' },
+  { hex: '#0284C7', label: 'Sky Blue Wax' },
+  { hex: '#38BDF8', label: 'Ice Blue Wax' },
+  { hex: '#F472B6', label: 'Pastel Pink Wax' },
 ];
 
 export default function LoveLettersAndCouponsModal() {
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 18,
     paddingVertical: 14,
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: COLORS.White,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.BorderSubtle,
   },
@@ -447,14 +447,14 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: '#F3ECE4',
+    backgroundColor: COLORS.LightBlueSoft,
     justifyContent: 'center',
     alignItems: 'center',
   },
   segmentContainer: {
     flexDirection: 'row',
     margin: 16,
-    backgroundColor: '#EFE8E0',
+    backgroundColor: '#E0F2FE',
     borderRadius: 16,
     padding: 4,
   },
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   segmentBtnActive: {
-    backgroundColor: COLORS.RoseCoral,
+    backgroundColor: COLORS.HotPink,
   },
   segmentText: {
     fontSize: 12,

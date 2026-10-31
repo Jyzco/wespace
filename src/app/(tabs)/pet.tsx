@@ -442,13 +442,18 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   nurseryCard: {
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: '#FFFFFF',
     borderRadius: 26,
     padding: 18,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: '#D0E7FC',
     marginBottom: 14,
+    shadowColor: '#38BDF8',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 3,
   },
   topRow: {
     width: '100%',
@@ -460,7 +465,7 @@ const styles = StyleSheet.create({
   levelBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#E0F2FE',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 12,
@@ -468,7 +473,7 @@ const styles = StyleSheet.create({
   levelText: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#B45309',
+    color: '#0284C7',
     marginLeft: 5,
   },
   renameChip: {
@@ -494,13 +499,13 @@ const styles = StyleSheet.create({
   speciesChip: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: COLORS.BorderSubtle,
     borderRadius: 14,
     paddingHorizontal: 11,
     paddingVertical: 6,
   },
   selectedSpeciesChip: {
-    borderColor: COLORS.RoseCoral,
+    borderColor: COLORS.HotPink,
     backgroundColor: COLORS.SoftRose,
   },
   speciesText: {
@@ -547,9 +552,9 @@ const styles = StyleSheet.create({
     color: COLORS.WarmCharcoal,
   },
   accessoryChip: {
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: '#F0F8FF',
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: '#D0E7FC',
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 10,
@@ -557,7 +562,7 @@ const styles = StyleSheet.create({
     minWidth: 74,
   },
   accessoryChipSelected: {
-    borderColor: COLORS.RoseCoral,
+    borderColor: COLORS.HotPink,
     backgroundColor: COLORS.SoftRose,
   },
   accessoryLabel: {
@@ -567,7 +572,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   accessoryLabelSelected: {
-    color: COLORS.RoseCoral,
+    color: COLORS.HotPink,
     fontWeight: '800',
   },
   actionsCard: {
@@ -586,10 +591,10 @@ const styles = StyleSheet.create({
   },
   actionBtn: {
     width: '31%',
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: '#F0F8FF',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: '#D0E7FC',
     paddingVertical: 12,
     paddingHorizontal: 8,
     alignItems: 'center',
@@ -643,7 +648,7 @@ const styles = StyleSheet.create({
   },
   gaugeTrack: {
     height: 8,
-    backgroundColor: '#EFEAE4',
+    backgroundColor: '#E0F2FE',
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -652,11 +657,11 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   historyCard: {
-    backgroundColor: COLORS.CozyCream,
+    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 14,
     borderWidth: 1,
-    borderColor: COLORS.ShadowBeige,
+    borderColor: '#D0E7FC',
   },
   historyHeading: {
     fontSize: 11,

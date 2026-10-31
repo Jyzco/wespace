@@ -13,33 +13,55 @@ import {
 } from '../types';
 
 export const COLORS = {
-  CozyCream: '#FFFAF3',
-  WarmCharcoal: '#2A2421',
-  WarmCharcoalMuted: '#6E625B',
-  WarmCharcoalLight: '#9C8E85',
-  RoseCoral: '#EE5D6C',
-  RoseCoralDark: '#D14353',
-  RoseCoralSoft: '#FFF0F2',
-  SoftRose: '#FFECEF',
-  HoneyYellow: '#F4B942',
-  HoneyYellowSoft: '#FFF9E6',
-  SoftLavender: '#9D74E7',
-  SoftLavenderSoft: '#F4EEFF',
-  PastelBlue: '#5EB1EF',
-  PastelBlueSoft: '#EDF7FF',
-  SageGreen: '#2A9D8F',
-  SageGreenSoft: '#E9F7F5',
-  ShadowBeige: '#EADDD0',
-  BorderSubtle: '#F0E6DC',
-  SurfaceCard: '#FFFFFF',
-  SurfaceSubtle: '#FBF8F4',
-  WhatsAppTeal: '#075E54',
-  WhatsAppGreen: '#25D366',
-  GradientStart: '#FCFAF7',
-  GradientEnd: '#F7F3EE',
-  HearthDark: '#1F1612',
-  HearthWarm: '#2E2019',
+  // Light Blue Tones
+  LightBlue: '#7DD3FC',
+  LightBluePastel: '#BAE6FD',
+  LightBlueSoft: '#E0F2FE',
+  LightBlueIce: '#F0F8FF',
+  PastelBlue: '#38BDF8',
+  PastelBlueSoft: '#E0F2FE',
+  GradientStart: '#F0F8FF',
+  GradientEnd: '#E0F2FE',
+  CozyCream: '#F0F8FF', // Soft light blue foundation
+
+  // White Tones
   White: '#FFFFFF',
+  SurfaceCard: '#FFFFFF',
+  SurfaceSubtle: '#F5FAFF',
+
+  // Hot Pink Tones
+  HotPink: '#FF1493',
+  HotPinkDark: '#D81177',
+  HotPinkSoft: '#FFF0F6',
+  HotPinkGlow: '#FFE4F0',
+  RoseCoral: '#FF1493', // Primary Hot Pink
+  RoseCoralDark: '#D81177', // Pressed / Deep Hot Pink
+  RoseCoralSoft: '#FFF0F6', // Delicate Hot Pink Blush
+  SoftRose: '#FFE4F0', // Soft Hot Pink Pill Background
+
+  // Secondary Accents
+  HoneyYellow: '#F59E0B',
+  HoneyYellowSoft: '#FEF3C7',
+  SoftLavender: '#A855F7',
+  SoftLavenderSoft: '#F3E8FF',
+  SageGreen: '#10B981',
+  SageGreenSoft: '#D1FAE5',
+
+  // Borders & Dividers
+  BorderSubtle: '#D0E7FC', // Soft Sky Blue Border
+  ShadowBeige: '#C2E0FA', // Pastel Sky Blue Divider
+  CardBorderPink: '#FFC2DF', // Faint Hot Pink Card Accent Border
+
+  // Typography
+  WarmCharcoal: '#0F172A', // Crisp Midnight Slate
+  WarmCharcoalMuted: '#475569', // Slate Gray
+  WarmCharcoalLight: '#94A3B8', // Cool Light Slate
+
+  // Functional & Room
+  WhatsAppTeal: '#0284C7', // Vibrant Sky Cyan
+  WhatsAppGreen: '#10B981',
+  HearthDark: '#0C1929',
+  HearthWarm: '#1E293B',
   Danger: '#EF4444',
   Success: '#10B981',
 };
@@ -51,37 +73,37 @@ export const MOOD_META: Record<
   AFFECTIONATE: {
     emoji: '🥰',
     label: 'Feeling Loving',
-    color: '#E11D48',
-    bg: '#FFE4E6',
+    color: '#FF1493',
+    bg: '#FFE4F0',
   },
   COZY: {
     emoji: '🧸',
     label: 'Cozy & Relaxed',
-    color: '#B45309',
-    bg: '#FEF3C7',
+    color: '#0284C7',
+    bg: '#E0F2FE',
   },
   COFFEE: {
     emoji: '☕',
     label: 'Caffeine Mode',
-    color: '#78350F',
-    bg: '#FDE68A',
+    color: '#D97706',
+    bg: '#FEF3C7',
   },
   DEEP_WORK: {
     emoji: '💻',
     label: 'Deep Focus',
-    color: '#0369A1',
+    color: '#0284C7',
     bg: '#E0F2FE',
   },
   MISSING_YOU: {
     emoji: '🌙',
     label: 'Missing You',
-    color: '#6D28D9',
-    bg: '#EDE9FE',
+    color: '#FF1493',
+    bg: '#FFE4F0',
   },
   SLEEPY: {
     emoji: '😴',
     label: 'Sleepy Loaf',
-    color: '#475569',
+    color: '#64748B',
     bg: '#F1F5F9',
   },
 };
@@ -257,7 +279,7 @@ export const INITIAL_LETTERS: LoveLetter[] = [
     recipient: 'Leo',
     title: 'For When You Have a Long Day',
     body: 'My dearest Leo, whenever the world feels too loud or heavy, close your eyes and remember that you always have a quiet harbor right here with me. I am endlessly proud of the gentle, thoughtful person you are.',
-    waxColor: '#EE5D6C',
+    waxColor: '#FF1493',
     isRead: true,
     timestamp: Date.now() - 5 * 24 * 3600 * 1000,
   },
@@ -267,7 +289,7 @@ export const INITIAL_LETTERS: LoveLetter[] = [
     recipient: 'Mia',
     title: '100 Days & Counting',
     body: 'Every morning since we met has felt a little brighter. Thank you for turning the simplest grocery runs and rainy evenings into my favorite memories.',
-    waxColor: '#9D74E7',
+    waxColor: '#0284C7',
     isRead: false,
     timestamp: Date.now() - 1 * 24 * 3600 * 1000,
   },

@@ -189,7 +189,7 @@ export const PolaroidArtwork: React.FC<PolaroidArtworkProps> = ({
             <Rect x="75" y="42" width="150" height="90" rx="10" fill="#FFFBEB" stroke="#F4B942" strokeWidth="3" />
             <Path
               d="M 150 104 C 132 88 122 76 122 65 C 122 56 130 50 138 50 C 144 50 148 54 150 58 C 152 54 156 50 162 50 C 170 50 178 56 178 65 C 178 76 168 88 150 104 Z"
-              fill="#EE5D6C"
+              fill="#FF1493"
             />
           </Svg>
         );
@@ -210,9 +210,9 @@ export const PolaroidArtwork: React.FC<PolaroidArtworkProps> = ({
             <Circle cx="150" cy="85" r="42" fill="#FFFDF9" stroke="#FDA4AF" strokeWidth="1.5" />
             {/* Pasta / Sweet Dish Illustration */}
             <Circle cx="150" cy="85" r="26" fill="#FDE68A" />
-            <Circle cx="142" cy="79" r="6" fill="#EE5D6C" />
-            <Circle cx="158" cy="83" r="6" fill="#EE5D6C" />
-            <Circle cx="148" cy="93" r="6" fill="#EE5D6C" />
+            <Circle cx="142" cy="79" r="6" fill="#FF1493" />
+            <Circle cx="158" cy="83" r="6" fill="#FF1493" />
+            <Circle cx="148" cy="93" r="6" fill="#FF1493" />
             <Path d="M 145 72 Q 150 65 156 72" stroke="#10B981" strokeWidth="3" fill="none" strokeLinecap="round" />
           </Svg>
         );

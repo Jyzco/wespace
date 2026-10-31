@@ -523,7 +523,7 @@ export const PouPetCanvas: React.FC<PouPetCanvasProps> = ({
               d="M 106 132 Q 120 148 134 132 Z"
               stroke="#4A3B32"
               strokeWidth="2.8"
-              fill="#EE5D6C"
+              fill={COLORS.HotPink}
               strokeLinecap="round"
             />
           ) : (
